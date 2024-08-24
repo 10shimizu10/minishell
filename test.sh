@@ -3,12 +3,15 @@
 LOG_DIR="log"
 mkdir -p $LOG_DIR
 
+# 日付と時間をフォーマットしてログファイル名を作成
+timestamp=$(date +"%Y%m%d_%H%M")
+log_file="$LOG_DIR/test_$timestamp.log"
+
 cleanup() {
 	rm -f $LOG_DIR/cmp $LOG_DIR/out
 }
 
 assert() {
-	local log_file="$LOG_DIR/assert.log"
 	printf '%-30s:' "\"$1\"" | tee -a $log_file
 	# exit status
 	echo -n -e "$1" | bash >$LOG_DIR/cmp 2>&- 
@@ -29,5 +32,10 @@ assert() {
 # Empty line (EOF)
 assert ''
 
+# Absolute path commands without args 
+assert '/bin/pwd'
+assert '/bin/echo'
+
 cleanup
-echo 'all OK' | tee -a $LOG_DIR/assert.log
+echo 'all OK' | tee -a $log_file
+

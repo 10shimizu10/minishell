@@ -1,0 +1,6 @@
+""                            :  diff OK  status OK
+all OK
+""                            :  diff OK  status OK
+"/bin/pwd"                    :  diff OK  status OK
+"/bin/echo"                   :  diff OK  status OK
+all OK

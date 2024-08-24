@@ -19,10 +19,10 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(LIBS) -o $(NAME) $(OBJS)
 
 clean:
-	$(RM) $(OBJS)
+	$(RM) $(OBJS) history.txt
 
 fclean: clean
-	$(RM) $(NAME)
+	$(RM) $(NAME) history.txt
 
 re: fclean all
 
