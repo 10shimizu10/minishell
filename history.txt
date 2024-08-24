@@ -1,5 +1,0 @@
-ls
-/bin/pwd
-./bin/pwd
-/bin/pwd
-/bin/ls
