@@ -52,6 +52,11 @@ assert './a.out'
 assert 'a.out'
 assert 'nosuchfile'
 
+# Tokenize
+assert 'ls /'
+assert 'echo hello    world     '
+assert 'nosuchfile\n\n'
+
 cleanup
 echo 'all OK' | tee -a $log_file
 

@@ -7,33 +7,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-
-//noreturn 下記の関数にたどり着いた時、元の関数はreturnしないことをコンパイラに伝える
-void fatal_error(const char *msg) __attribute__((noreturn));
-void err_exit(const char *location, const char *msg, int status) __attribute__((noreturn));
-
-void err_exit(const char *location, const char *msg, int status)
-{
-    const char *prefix = "minishell: ";
-    const char *separator = ": ";
-    const char *newline = "\n";
-
-    write(STDERR_FILENO, prefix, strlen(prefix));
-    write(STDERR_FILENO, location, strlen(location));
-    write(STDERR_FILENO, separator, strlen(separator));
-    write(STDERR_FILENO, msg, strlen(msg));
-    write(STDERR_FILENO, newline, 1);
-    exit(status);
-}
-
-void fatal_error(const char *msg)
-{
-    const char *prefix = "Fatal Error: ";
-    write(STDERR_FILENO, prefix, strlen(prefix));
-    write(STDERR_FILENO, msg, strlen(msg));
-    write(STDERR_FILENO, "\n", 1);
-    exit(1);
-}
+#include "minishell.h"
 
 //パスを探す
 char *search_path(const char* filename)
@@ -103,13 +77,21 @@ int exec(char *argv[])
     }
 }
 
-int interpret(char *line)
+void interpret(char *line, int *stat_loc)
 {
-    int status;
-    char *argv[] = {line, NULL};
+    Token *token;
+    char **argv;
 
-    status = exec(argv);
-    return status;
+    token = tokenize(line);
+    if(token->kind == TOKEN_EOF)
+        ;
+    else
+    {
+        argv = token_list_to_argv(token);
+        *stat_loc = exec(argv);
+        free_argv(argv);
+    }
+    free_token(token);
 }
 
 int main()
@@ -128,9 +110,9 @@ int main()
 
         if(*line)
             add_history(line);
-        status = interpret(line);
+        interpret(line, &status);
         free(line);
     }
-    write_history("history.txt");
+    //write_history("history.txt");
     exit(status);
 }
