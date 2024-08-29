@@ -87,6 +87,7 @@ void interpret(char *line, int *stat_loc)
         ;
     else
     {
+        expand(token);
         argv = token_list_to_argv(token);
         *stat_loc = exec(argv);
         free_argv(argv);

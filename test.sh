@@ -12,12 +12,20 @@ cat <<EOF | gcc -xc -o a.out -
 int main() { printf("hello from a.out\n"); }
 EOF
 
+cat <<EOF | gcc -xc -o print_args -
+#include <stdio.h>
+int main(int argc, char *argv[]) {
+	for (int i = 0; argv[i]; i++)
+		printf("argv[%d] = %s\n", i, argv[i]);
+}
+EOF
+
 cleanup() {
-	rm -f $LOG_DIR/cmp $LOG_DIR/out $LOG_DIR/a.out
+	rm -f $LOG_DIR/cmp $LOG_DIR/out $LOG_DIR/a.out $LOG_DIR/print_args
 }
 
 assert() {
-	printf '%-30s:' "\"$1\"" | tee -a $log_file
+	printf '%-50s:' "[$1]" | tee -a $log_file
 	# exit status
 	echo -n -e "$1" | bash >$LOG_DIR/cmp 2>&- 
 	expected=$?
@@ -53,6 +61,7 @@ assert 'a.out'
 assert 'nosuchfile'
 
 # Tokenize
+## unquoted word
 assert 'ls /'
 assert 'echo hello    world     '
 assert 'nosuchfile\n\n'
@@ -60,3 +69,16 @@ assert 'nosuchfile\n\n'
 cleanup
 echo 'all OK' | tee -a $log_file
 
+## single quote
+assert "./print_args 'hello   world' '42Tokyo'"
+assert "echo 'hello   world' '42Tokyo'"
+assert "echo '\"hello   world\"' '42Tokyo'"
+
+## double quote
+assert './print_args "hello   world" "42Tokyo"'
+assert 'echo "hello   world" "42Tokyo"'
+assert "echo \"'hello   world'\" \"42Tokyo\""
+
+## combination
+assert "echo hello'      world'"
+assert "echo hello'  world  '\"  42Tokyo  \""

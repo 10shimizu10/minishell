@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "minishell.h"
 
-Token *new_token(char *word, Token_Type kind)
+Token *new_token(char *word, TokenType kind)
 {
     Token* token;
 
@@ -85,13 +85,38 @@ Token *operator(char **rest, char *line)
     assert_error("Unexpected operator");
 }
 
-Token *word(char **rest, char*line)
+Token *word(char **rest, char *line)
 {
     const char *start = line;
     char *word;
 
     while(*line && !is_metacharacter(*line))
-        line++;
+    {
+        if(*line == SINGLE_QUOTE_CHAR)
+        {
+            line++;
+            while(*line != SINGLE_QUOTE_CHAR)
+            {
+                if(*line == '\0')
+                    todo("Unclosed single quote");
+                line++;
+            }
+            line++;
+        }
+        else if(*line == DOUBLE_QUOTE_CHAR)
+        {
+            line++;
+            while(*line != DOUBLE_QUOTE_CHAR)
+            {
+                if(*line == '\0')
+                    todo("Unclosed double quote");
+                line++;
+            }
+            line++;
+        }
+        else
+            line++;
+    }
     word = strndup(start, line - start);
     if(word == NULL)
         fatal_error("strndup");

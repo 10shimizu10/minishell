@@ -1,0 +1,22 @@
+""                                                :  diff OK  status OK
+"/bin/pwd"                                        :  diff NG  status NG, expected 0 but got 130
+"/bin/echo"                                       :  diff NG  status NG, expected 0 but got 130
+"/bin/ls"                                         :  diff NG  status NG, expected 0 but got 130
+"pwd"                                             :  diff NG  status NG, expected 0 but got 130
+"echo"                                            :  diff NG  status NG, expected 0 but got 130
+"ls"                                              :  diff NG  status NG, expected 0 but got 130
+"./a.out"                                         :  diff OK  status OK
+"a.out"                                           :  diff OK  status NG, expected 127 but got 130
+"nosuchfile"                                      :  diff OK  status NG, expected 127 but got 130
+"ls /"                                            :  diff NG  status NG, expected 0 but got 130
+"echo hello    world     "                        :  diff NG  status NG, expected 0 but got 130
+"nosuchfile\n\n"                                  :  diff OK  status NG, expected 127 but got 130
+all OK
+"./print_args 'hello   world' '42Tokyo'"          :  diff OK  status OK
+"echo 'hello   world' '42Tokyo'"                  :  diff NG  status NG, expected 0 but got 130
+"echo '"hello   world"' '42Tokyo'"                :  diff NG  status NG, expected 0 but got 130
+"./print_args "hello   world" "42Tokyo""          :  diff NG  status NG, expected 0 but got 130
+"echo "hello   world" "42Tokyo""                  :  diff NG  status NG, expected 0 but got 130
+"echo "'hello   world'" "42Tokyo""                :  diff NG  status NG, expected 0 but got 130
+"echo hello'      world'"                         :  diff NG  status NG, expected 0 but got 130
+"echo hello'  world  '"  42Tokyo  ""              :  diff NG  status NG, expected 0 but got 130
