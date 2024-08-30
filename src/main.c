@@ -81,6 +81,7 @@ void interpret(char *line, int *stat_loc)
 {
     Token *token;
     char **argv;
+    t_node *node;
 
     token = tokenize(line);
     if(token->kind == TOKEN_EOF)
@@ -89,10 +90,12 @@ void interpret(char *line, int *stat_loc)
         *stat_loc = ERROR_TOKENIZE;
     else
     {
-        expand(token);
-        argv = token_list_to_argv(token);
+        node = parse(token);
+        expand(node);
+        argv = token_list_to_argv(node->args);
         *stat_loc = exec(argv);
         free_argv(argv);
+        free_node(node);
     }
     free_token(token);
 }

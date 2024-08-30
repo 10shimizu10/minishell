@@ -23,48 +23,78 @@ void append_char(char **s, char c)
     *s = new;
 }
 
-void quote_removal(Token *token)
+void	remove_single_quote(char **dst, char **rest, char *p)
 {
-    char *new_word;
-    char *p;
-
-    if(token == NULL || token->kind != TOKEN_WORD || token->word == NULL)
-        return ;
-    p = token->word;
-    new_word = NULL;
-    while(*p && !is_metacharacter(*p))
-    {
-        if(*p == SINGLE_QUOTE_CHAR)
-        {
-            p++;
-            while(*p != SINGLE_QUOTE_CHAR)
-            {
-                if(*p == '\0')
-                    assert_error("Unclosed single quote");
-                append_char(&new_word, *p++);
-            }
-            p++;
-        }
-        else if(*p == DOUBLE_QUOTE_CHAR)
-        {
-            p++;
-            while(*p != DOUBLE_QUOTE_CHAR)
-            {
-                if(*p == '\0')
-                    assert_error("Unclosed single quote");
-                append_char(&new_word, *p++);
-            }
-            p++;
-        }
-        else
-            append_char(&new_word, *p++);
-    }
-    free(token->word);
-    token->word = new_word;
-    quote_removal(token->next);
+	if (*p == SINGLE_QUOTE_CHAR)
+	{
+		// skip quote
+		p++;
+		while (*p != SINGLE_QUOTE_CHAR)
+		{
+			if (*p == '\0')
+				assert_error("Unclosed single quote");
+			append_char(dst, *p++);
+		}
+		// skip quote
+		p++;
+		*rest = p;
+	}
+	else
+		assert_error("Expected single quote");
 }
 
-void expand(Token *token)
+void	remove_double_quote(char **dst, char **rest, char *p)
 {
-    quote_removal(token);
+	if (*p == DOUBLE_QUOTE_CHAR)
+	{
+		// skip quote
+		p++;
+		while (*p != DOUBLE_QUOTE_CHAR)
+		{
+			if (*p == '\0')
+				assert_error("Unclosed double quote");
+			append_char(dst, *p++);
+		}
+		// skip quote
+		p++;
+		*rest = p;
+	}
+	else
+		assert_error("Expected double quote");
+}
+
+void	remove_quote(Token *token)
+{
+	char	*new_word;
+	char	*p;
+
+	if (token == NULL || token->kind != TOKEN_WORD || token->word == NULL)
+		return ;
+	p = token->word;
+	new_word = NULL;
+	while (*p && !is_metacharacter(*p))
+	{
+		if (*p == SINGLE_QUOTE_CHAR)
+			remove_single_quote(&new_word, &p, p);
+		else if (*p == DOUBLE_QUOTE_CHAR)
+			remove_double_quote(&new_word, &p, p);
+		else
+			append_char(&new_word, *p++);
+	}
+	free(token->word);
+	token->word = new_word;
+	remove_quote(token->next);
+}
+
+void	expand_quote_removal(t_node *node)
+{	
+    if (node == NULL)
+		return ;
+	remove_quote(node->args);
+	expand_quote_removal(node->next);
+}
+
+void	expand(t_node *node)
+{
+	expand_quote_removal(node);
 }

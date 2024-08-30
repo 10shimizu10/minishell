@@ -29,6 +29,20 @@ typedef struct Token {
     struct Token *next;
 } Token;
 
+enum e_node_kind {
+    ND_SIMPLE_CMD,
+};
+
+typedef enum e_node_kind t_node_kind;
+
+typedef struct s_node t_node;
+struct s_node
+{
+    Token *args;
+    t_node_kind kind;
+    t_node *next;
+};
+
 //token.c
 # define SINGLE_QUOTE_CHAR '\''
 # define DOUBLE_QUOTE_CHAR '"'
@@ -46,10 +60,18 @@ Token	*operator(char **rest, char *line);
 Token	*word(char **rest, char *line);
 
 // expand.c
-void expand(Token *token);
+void expand(t_node *node);
 
 // destructor.c
+void free_node(t_node *node);
 void free_token(Token *token);
 void free_argv(char **argv);
+
+//parse.c
+t_node *parse(Token *token);
+bool at_eof(Token *token);
+t_node *new_node(t_node_kind kind);
+void append_token(Token **tokens, Token *token);
+Token *tokendup(Token *token);
 
 #endif
