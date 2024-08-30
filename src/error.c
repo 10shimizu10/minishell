@@ -4,6 +4,8 @@
 #include <string.h>
 #include "minishell.h"
 
+bool syntax_error = false;
+
 void fatal_error(const char *msg)
 {
     const char *prefix = "Fatal Error: ";
@@ -11,6 +13,18 @@ void fatal_error(const char *msg)
     write(STDERR_FILENO, msg, strlen(msg));
     write(STDERR_FILENO, "\n", 1);
     exit(1);
+}
+
+void tokenize_error(const char *location, char **rest, char *line)
+{
+    syntax_error = true;
+
+    write(STDERR_FILENO, "minishell: syntax error near ", 29);
+    write(STDERR_FILENO, location, strlen(location));
+    write(STDERR_FILENO, "\n", 1);
+    while (*line)
+        line++;
+    *rest = line;
 }
 
 void assert_error(const char *msg)

@@ -85,6 +85,8 @@ void interpret(char *line, int *stat_loc)
     token = tokenize(line);
     if(token->kind == TOKEN_EOF)
         ;
+    else if(syntax_error)
+        *stat_loc = ERROR_TOKENIZE;
     else
     {
         expand(token);
