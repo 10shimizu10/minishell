@@ -11,10 +11,12 @@ t_node *parse(t_token *token)
     while(token && !at_eof(token))
     {
         if(token->kind == TOKEN_WORD)
+        {
             append_token(&node->args, tokendup(token));
+            token = token->next;
+        }
         else
-            todo("Implement parser");
-        token = token->next;
+        parse_error("Unexpected Token", &token, token);
     }
     return node;
 }

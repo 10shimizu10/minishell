@@ -5,16 +5,13 @@
 #include <stdbool.h>
 
 
-// error.c
-# define ERROR_TOKENIZE 258
-extern bool syntax_error;
-void	todo(const char *msg) __attribute__((noreturn));
-void	fatal_error(const char *msg) __attribute__((noreturn));
-void	assert_error(const char *msg) __attribute__((noreturn));
-void	err_exit(const char *location, const char *msg, int status) __attribute__((noreturn));
-void tokenize_error(const char *location, char **rest, char *line);
+#define ERROR_TOKENIZE 258
+#define ERROR_PARSE 258;
+# define SINGLE_QUOTE_CHAR '\''
+# define DOUBLE_QUOTE_CHAR '"'
 
-// tokenize.c
+extern bool syntax_error;
+
 typedef enum e_token_type{
     TOKEN_WORD,
     TOKEN_RESERVED,
@@ -43,11 +40,16 @@ typedef struct s_node
     t_node *next;
 } t_node;
 
+// error.c
+void	todo(const char *msg) __attribute__((noreturn));
+void	fatal_error(const char *msg) __attribute__((noreturn));
+void	assert_error(const char *msg) __attribute__((noreturn));
+void	err_exit(const char *location, const char *msg, int status) __attribute__((noreturn));
+void    tokenize_error(const char *location, char **rest, char *line);
+void    parse_error(const char *location, t_token **rest, t_token * token);
+void    xperror(const char *location);
 
-//token.c
-# define SINGLE_QUOTE_CHAR '\''
-# define DOUBLE_QUOTE_CHAR '"'
-
+// tokenize.c
 t_token *tokenize(char *line);
 char **token_list_to_argv(t_token *token);
 t_token	*new_token(char *word, t_token_type kind);
