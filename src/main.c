@@ -79,7 +79,7 @@ int exec(char *argv[])
 
 void interpret(char *line, int *stat_loc)
 {
-    Token *token;
+    t_token *token;
     char **argv;
     t_node *node;
 

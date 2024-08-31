@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include "minishell.h"
 
-Token *new_token(char *word, TokenType kind)
+t_token *new_token(char *word, t_token_type kind)
 {
-    Token* token;
+    t_token* token;
 
     token = malloc(sizeof(*token));
     if(token == NULL)
@@ -64,7 +64,7 @@ bool is_word(const char *s)
     return(*s && !is_metacharacter(*s));
 }
 
-Token *operator(char **rest, char *line)
+t_token *operator(char **rest, char *line)
 {
    	static char	*const	operators[] = {"||", "&", "&&", ";", ";;", "(", ")", "|", "\n"};
     size_t i = 0;
@@ -85,7 +85,7 @@ Token *operator(char **rest, char *line)
     assert_error("Unexpected operator");
 }
 
-Token *word(char **rest, char *line)
+t_token *word(char **rest, char *line)
 {
     const char *start = line;
     char *word;
@@ -128,10 +128,10 @@ Token *word(char **rest, char *line)
     return (new_token(word, TOKEN_WORD));
 }
 
-Token *tokenize(char *line)
+t_token *tokenize(char *line)
 {
-    Token head;
-    Token *token;
+    t_token head;
+    t_token *token;
     
     syntax_error = false;
     head.next = NULL;
@@ -151,7 +151,7 @@ Token *tokenize(char *line)
     return head.next;
 }
 
-char **tail_recursive(Token *token, int nargs, char **argv)
+char **tail_recursive(t_token *token, int nargs, char **argv)
 {
     char **new_argv;
 
@@ -182,7 +182,7 @@ char **tail_recursive(Token *token, int nargs, char **argv)
     return (tail_recursive(token->next, nargs + 1, argv));
 }
 
-char **token_list_to_argv(Token *token)
+char **token_list_to_argv(t_token *token)
 {
     char **argv;
 

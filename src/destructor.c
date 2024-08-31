@@ -10,7 +10,7 @@ void free_node(t_node *node)
     free(node);
 }
 
-void free_token(Token *token)
+void free_token(t_token *token)
 {
     if(token == NULL)
         return;

@@ -63,7 +63,7 @@ void	remove_double_quote(char **dst, char **rest, char *p)
 		assert_error("Expected double quote");
 }
 
-void	remove_quote(Token *token)
+void	remove_quote(t_token *token)
 {
 	char	*new_word;
 	char	*p;

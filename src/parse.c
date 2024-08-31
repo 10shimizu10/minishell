@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-t_node *parse(Token *token)
+t_node *parse(t_token *token)
 {
     t_node *node;
 
@@ -19,12 +19,12 @@ t_node *parse(Token *token)
     return node;
 }
 
-bool at_eof(Token *token)
+bool at_eof(t_token *token)
 {
     return (token->kind == TOKEN_EOF);
 }
 
-t_node *new_node(t_node_kind kind)
+t_node *new_node(t_node_type type)
 {
     t_node *node;
 
@@ -33,11 +33,11 @@ t_node *new_node(t_node_kind kind)
         fatal_error("malloc");
     memset(node, 0, sizeof(*node));
 
-    node->kind = kind;
+    node->kind = type;
     return (node);
 }
 
-Token *tokendup(Token *token)
+t_token *tokendup(t_token *token)
 {
     char *word;
 
@@ -47,7 +47,7 @@ Token *tokendup(Token *token)
     return new_token(word, token->kind);
 }
 
-void append_token(Token **tokens, Token *token)
+void append_token(t_token **tokens, t_token *token)
 {
     if(*tokens == NULL)
     {

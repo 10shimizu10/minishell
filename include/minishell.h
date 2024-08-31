@@ -15,63 +15,62 @@ void	err_exit(const char *location, const char *msg, int status) __attribute__((
 void tokenize_error(const char *location, char **rest, char *line);
 
 // tokenize.c
-typedef enum {
+typedef enum e_token_type{
     TOKEN_WORD,
     TOKEN_RESERVED,
     TOKEN_OP,
     TOKEN_EOF
-} TokenType;
+} t_token_type;
 
-
-typedef struct Token {
+typedef struct t_token
+typedef struct s_token
+{
     char *word;
-    TokenType kind;
-    struct Token *next;
-} Token;
+    t_token_type kind;
+    struct t_token *next;
+}t_token;
 
-enum e_node_kind {
+typedef enum e_node_type {
     ND_SIMPLE_CMD,
-};
-
-typedef enum e_node_kind t_node_kind;
+} t_node_type;
 
 typedef struct s_node t_node;
-struct s_node
+typedef struct s_node
 {
-    Token *args;
-    t_node_kind kind;
+    t_token *args;
+    t_node_type kind;
     t_node *next;
-};
+} t_node;
 
 //token.c
 # define SINGLE_QUOTE_CHAR '\''
 # define DOUBLE_QUOTE_CHAR '"'
 
-Token *tokenize(char *line);
-char **token_list_to_argv(Token *token);
-Token	*new_token(char *word, TokenType kind);
+t_token *tokenize(char *line);
+char **token_list_to_argv(t_token *token);
+t_token	*new_token(char *word, t_token_type kind);
 bool   	is_blank(char c);
 bool   	consume_blank(char **rest, char *line);
 bool   	startswith(const char *s, const char *keyword);
 bool   	is_operator(const char *s);
 bool   	is_metacharacter(char c);
 bool   	is_word(const char *s);
-Token	*operator(char **rest, char *line);
-Token	*word(char **rest, char *line);
+t_token	*operator(char **rest, char *line);
+t_token	*word(char **rest, char *line);
 
 // expand.c
 void expand(t_node *node);
 
 // destructor.c
 void free_node(t_node *node);
-void free_token(Token *token);
+void free_token(t_token *token);
 void free_argv(char **argv);
 
 //parse.c
-t_node *parse(Token *token);
-bool at_eof(Token *token);
-t_node *new_node(t_node_kind kind);
-void append_token(Token **tokens, Token *token);
-Token *tokendup(Token *token);
+t_token *tokendup(t_token *token);
+t_node *parse(t_token *token);
+bool at_eof(t_token *token);
+t_node *new_node(t_node_type kind);
+void append_token(t_token **tokens, t_token *token);
 
 #endif
