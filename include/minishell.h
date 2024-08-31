@@ -22,17 +22,18 @@ typedef enum e_token_type{
     TOKEN_EOF
 } t_token_type;
 
-typedef struct t_token
+typedef struct s_token t_token;
 typedef struct s_token
 {
     char *word;
     t_token_type kind;
-    struct t_token *next;
+    t_token *next;
 }t_token;
 
 typedef enum e_node_type {
     ND_SIMPLE_CMD,
 } t_node_type;
+
 
 typedef struct s_node t_node;
 typedef struct s_node
@@ -41,6 +42,7 @@ typedef struct s_node
     t_node_type kind;
     t_node *next;
 } t_node;
+
 
 //token.c
 # define SINGLE_QUOTE_CHAR '\''
