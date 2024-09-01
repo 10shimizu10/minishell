@@ -29,15 +29,23 @@ typedef struct s_token
 
 typedef enum e_node_type {
     ND_SIMPLE_CMD,
+	ND_REDIR_OUT,
 } t_node_type;
 
 
 typedef struct s_node t_node;
 typedef struct s_node
 {
-    t_token *args;
     t_node_type kind;
     t_node *next;
+	// CMD
+	t_token		*args;
+	t_node		*redirects;
+	// REDIR
+	int			targetfd;
+	t_token		*filename;
+	int			filefd;
+	int			stashed_targetfd;
 } t_node;
 
 // error.c
@@ -71,10 +79,16 @@ void free_token(t_token *token);
 void free_argv(char **argv);
 
 //parse.c
-t_token *tokendup(t_token *token);
 t_node *parse(t_token *token);
+void	append_command_element(t_node *command, t_token **rest, t_token *tok);
 bool at_eof(t_token *token);
 t_node *new_node(t_node_type kind);
 void append_token(t_token **tokens, t_token *token);
+t_token *token_dup(t_token *token);
+
+// redirect.c
+void	open_redir_file(t_node *redirects);
+void	do_redirect(t_node *redirects);
+void	reset_redirect(t_node *redirects);
 
 #endif

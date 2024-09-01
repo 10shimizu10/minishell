@@ -1,0 +1,48 @@
+[]                                                :  diff NG  status NG, expected  but got 255
+[/bin/pwd]                                        :  diff NG  status NG, expected  but got 255
+[/bin/echo]                                       :  diff NG  status NG, expected  but got 255
+[/bin/ls]                                         :  diff NG  status NG, expected  but got 255
+[pwd]                                             :  diff NG  status NG, expected  but got 255
+[echo]                                            :  diff NG  status NG, expected  but got 255
+[ls]                                              :  diff NG  status NG, expected  but got 255
+[./a.out]                                         :  diff NG  status NG, expected  but got 255
+[a.out]                                           :  diff NG  status NG, expected  but got 255
+[nosuchfile]                                      :  diff NG  status NG, expected  but got 255
+[ls /]                                            :  diff NG  status NG, expected  but got 255
+[echo hello    world     ]                        :  diff NG  status NG, expected  but got 255
+[nosuchfile\n\n]                                  :  diff NG  status NG, expected  but got 255
+all OK
+[./print_args 'hello   world' '42Tokyo']          :  diff NG  status NG, expected  but got 255
+[echo 'hello   world' '42Tokyo']                  :  diff NG  status NG, expected  but got 255
+[echo '"hello   world"' '42Tokyo']                :  diff NG  status NG, expected  but got 255
+[./print_args "hello   world" "42Tokyo"]          :  diff NG  status NG, expected  but got 255
+[echo "hello   world" "42Tokyo"]                  :  diff NG  status NG, expected  but got 255
+[echo "'hello   world'" "42Tokyo"]                :  diff NG  status NG, expected  but got 255
+[echo hello'      world']                         :  diff NG  status NG, expected  but got 255
+[echo hello'  world  '"  42Tokyo  "]              :  diff NG  status NG, expected  but got 255
+[echo hello >hello.txt]                           :  diff NG  status NG, expected  but got 255
+[echo hello >f1>f2>f3]                            :  diff NG  status NG, expected  but got 255
+[]                                                :  diff NG  status NG, expected  but got 255
+[/bin/pwd]                                        :  diff NG  status NG, expected  but got 255
+[/bin/echo]                                       :  diff NG  status NG, expected  but got 255
+[/bin/ls]                                         :  diff NG  status NG, expected  but got 255
+[pwd]                                             :  diff NG  status NG, expected  but got 255
+[echo]                                            :  diff NG  status NG, expected  but got 255
+[ls]                                              :  diff NG  status NG, expected  but got 255
+[./a.out]                                         :  diff NG  status NG, expected  but got 255
+[a.out]                                           :  diff NG  status NG, expected  but got 255
+[nosuchfile]                                      :  diff NG  status NG, expected  but got 255
+[ls /]                                            :  diff NG  status NG, expected  but got 255
+[echo hello    world     ]                        :  diff NG  status NG, expected  but got 255
+[nosuchfile\n\n]                                  :  diff NG  status NG, expected  but got 255
+all OK
+[./print_args 'hello   world' '42Tokyo']          :  diff NG  status NG, expected  but got 255
+[echo 'hello   world' '42Tokyo']                  :  diff NG  status NG, expected  but got 255
+[echo '"hello   world"' '42Tokyo']                :  diff NG  status NG, expected  but got 255
+[./print_args "hello   world" "42Tokyo"]          :  diff NG  status NG, expected  but got 255
+[echo "hello   world" "42Tokyo"]                  :  diff NG  status NG, expected  but got 255
+[echo "'hello   world'" "42Tokyo"]                :  diff NG  status NG, expected  but got 255
+[echo hello'      world']                         :  diff NG  status NG, expected  but got 255
+[echo hello'  world  '"  42Tokyo  "]              :  diff NG  status NG, expected  but got 255
+[echo hello >hello.txt]                           :  diff NG  status NG, expected  but got 255
+[echo hello >f1>f2>f3]                            :  diff NG  status NG, expected  but got 255

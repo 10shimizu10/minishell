@@ -52,18 +52,21 @@ void validate_access(const char *path, const char *filename)
 }
 
 //ファイルの実行
-int exec(char *argv[])
+int	exec_cmd(t_node *node)
 {
     extern char **environ;
-    const char *path = argv[0];
+	char		*path;
     pid_t pid;
     int wstatus;
+	char		**argv;
 
     pid = fork();
     if(pid < 0)
         fatal_error("fork");
     else if(pid == 0)
     {
+		argv = token_list_to_argv(node->args);
+		path = argv[0];
         if(strchr(path, '/') == NULL)
             path = search_path(path);
         validate_access(path, argv[0]);
@@ -77,24 +80,36 @@ int exec(char *argv[])
     }
 }
 
+int	exec(t_node *node)
+{
+	int	status;
+	open_redir_file(node->redirects);
+	do_redirect(node->redirects);
+	status = exec_cmd(node);
+	reset_redirect(node->redirects);
+	return (status);
+}
+
 void interpret(char *line, int *stat_loc)
 {
     t_token *token;
-    char **argv;
     t_node *node;
 
     token = tokenize(line);
-    if(token->kind == TOKEN_EOF)
+	if (at_eof(token))
         ;
     else if(syntax_error)
         *stat_loc = ERROR_TOKENIZE;
     else
     {
         node = parse(token);
-        expand(node);
-        argv = token_list_to_argv(node->args);
-        *stat_loc = exec(argv);
-        free_argv(argv);
+		if (syntax_error)
+			*stat_loc = ERROR_PARSE;
+		if (!syntax_error)
+		{
+			expand(node);
+			*stat_loc = exec(node);
+		}
         free_node(node);
     }
     free_token(token);

@@ -1,17 +1,13 @@
 #!/bin/bash
-
-LOG_DIR="log"
-mkdir -p $LOG_DIR
-
-# 日付と時間をフォーマットしてログファイル名を作成
-timestamp=$(date +"%Y%m%d_%H%M")
-log_file="$LOG_DIR/test_$timestamp.log"
-
+RED="\033[31m"
+GREEN="\033[32m"
+RESET="\033[0m"
+OK=$GREEN"OK"$RESET
+NG=$RED"NG"$RESET
 cat <<EOF | gcc -xc -o a.out -
 #include <stdio.h>
 int main() { printf("hello from a.out\n"); }
 EOF
-
 cat <<EOF | gcc -xc -o print_args -
 #include <stdio.h>
 int main(int argc, char *argv[]) {
@@ -19,66 +15,78 @@ int main(int argc, char *argv[]) {
 		printf("argv[%d] = %s\n", i, argv[i]);
 }
 EOF
-
 cleanup() {
-	rm -f $LOG_DIR/cmp $LOG_DIR/out $LOG_DIR/a.out $LOG_DIR/print_args
+	rm -f cmp out a.out print_args
 }
 
 assert() {
-	printf '%-50s:' "[$1]" | tee -a $log_file
+	COMMAND="$1"
+	shift
+	printf '%-50s:' "[$COMMAND]"
 	# exit status
-	echo -n -e "$1" | bash >$LOG_DIR/cmp 2>&- 
+	echo -n -e "$COMMAND" | bash >cmp 2>&-
 	expected=$?
-	echo -n -e "$1" | ./minishell >$LOG_DIR/out 2>&-
+	for arg in "$@"
+	do
+		mv "$arg" "$arg"".cmp"
+	done
+	echo -n -e "$COMMAND" | ./minishell >out 2>&-
 	actual=$?
+	for arg in "$@"
+	do
+		mv "$arg" "$arg"".out"
+	done
 
-	diff $LOG_DIR/cmp $LOG_DIR/out >/dev/null && echo -n '  diff OK' | tee -a $log_file || echo -n '  diff NG' | tee -a $log_file
+	diff cmp out >/dev/null && echo -e -n "  diff $OK" || echo -e -n "  diff $NG"
 
 	if [ "$actual" = "$expected" ]; then
-		echo -n '  status OK' | tee -a $log_file
+		echo -e -n "  status $OK"
 	else
-		echo -n "  status NG, expected $expected but got $actual" | tee -a $log_file
+		echo -e -n "  status $NG, expected $expected but got $actual"
 	fi
-	echo | tee -a $log_file
+	for arg in "$@"
+	do
+		echo -n "  [$arg] "
+		diff "$arg"".cmp" "$arg"".out" >/dev/null && echo -e -n "$OK" || echo -e -n "$NG"
+		rm -f "$arg"".cmp" "$arg"".out"
+	done
+	echo
 }
 
 # Empty line (EOF)
 assert ''
-
 # Absolute path commands without args 
 assert '/bin/pwd'
 assert '/bin/echo'
 assert '/bin/ls'
-
 # Search command path without args
 assert 'pwd'
 assert 'echo'
 assert 'ls'
 assert './a.out'
-
 ## no such command
 assert 'a.out'
 assert 'nosuchfile'
-
 # Tokenize
 ## unquoted word
 assert 'ls /'
 assert 'echo hello    world     '
 assert 'nosuchfile\n\n'
-
-cleanup
-echo 'all OK' | tee -a $log_file
-
 ## single quote
 assert "./print_args 'hello   world' '42Tokyo'"
 assert "echo 'hello   world' '42Tokyo'"
 assert "echo '\"hello   world\"' '42Tokyo'"
-
 ## double quote
 assert './print_args "hello   world" "42Tokyo"'
 assert 'echo "hello   world" "42Tokyo"'
 assert "echo \"'hello   world'\" \"42Tokyo\""
-
 ## combination
 assert "echo hello'      world'"
 assert "echo hello'  world  '\"  42Tokyo  \""
+
+# Redirect
+## Redirecting output
+assert 'echo hello >hello.txt' 'hello.txt'
+assert 'echo hello >f1>f2>f3' 'f1' 'f2' 'f3'
+
+cleanup

@@ -40,7 +40,7 @@ bool startswith(const char *s, const char* keyword)
     return (memcmp(s, keyword, strlen(keyword)) == 0);
 }
 
-bool is_operator(const char *s)
+bool	is_control_operator(const char *s)
 {
     static char *const operators[] = {"||", "&", "&&", ";", ";;", "(", ")", "|", "\n"};
     size_t i  = 0;
@@ -54,9 +54,26 @@ bool is_operator(const char *s)
     return false;
 }
 
+bool	is_redirection_operator(const char *s)
+{
+	static char	*const operators[] = {">", "<", ">>", "<<"};
+	size_t				i = 0;				
+
+	while (i < sizeof(operators) / sizeof(*operators))
+	{
+		if (startswith(s, operators[i]))
+			return (true);
+		i++;
+	}
+	return (false);
+
+}
+
 bool is_metacharacter(char c)
 {
-    return (c && strchr("|&;()<> \t\n", c));
+	if (is_blank(c))
+		return (true);
+	return (c && strchr("|&;()<>\n", c));
 }
 
 bool is_word(const char *s)
@@ -66,7 +83,8 @@ bool is_word(const char *s)
 
 t_token *operator(char **rest, char *line)
 {
-   	static char	*const	operators[] = {"||", "&", "&&", ";", ";;", "(", ")", "|", "\n"};
+    static char	*const	operators[] = {">>", "<<", "||", "&&", ";;", "<", ">", "&", ";", "(", ")", "|", "\n"};
+
     size_t i = 0;
     char *op;
 
@@ -140,7 +158,7 @@ t_token *tokenize(char *line)
     {
         if(consume_blank(&line, line))
             continue;
-        else if(is_operator(line))
+        else if (is_metacharacter(*line))
             token = token->next = operator(&line, line);
         else if(is_word(line))
             token = token->next =word(&line, line);
