@@ -33,6 +33,7 @@ typedef enum e_node_type {
 	ND_REDIR_OUT,
 	ND_REDIR_IN,
 	ND_REDIR_APPEND,
+    ND_REDIR_HEREDOC,
 } t_node_type;
 
 
@@ -47,6 +48,7 @@ typedef struct s_node
 	// REDIR
 	int			targetfd;
 	t_token		*filename;
+    t_token *delimiter;
 	int			filefd;
 	int			stashed_targetfd;
 } t_node;

@@ -8,6 +8,7 @@ void free_node(t_node *node)
         return;
     free_token(node->args);
 	free_token(node->filename);
+    free_token(node->delimiter);
 	free_node(node->redirects);
     free_node(node->next);
     free(node);
