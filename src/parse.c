@@ -7,17 +7,55 @@
 
 bool	equal_op(t_token *tok, char *op);
 void	append_node(t_node **node, t_node *elm);
+t_node *pipeline(t_token **rest, t_token *token);
+t_node *simple_command(t_token **rest, t_token *token);
 
 
 t_node *parse(t_token *token)
 {
+    return (pipeline(&token, token));
+}
+
+t_node *pipeline(t_token **rest, t_token *token)
+{
     t_node *node;
 
-    node = new_node(ND_SIMPLE_CMD);
-	append_command_element(node, &token, token);
-    while(token && !at_eof(token))
-    	append_command_element(node, &token, token);
+    node = new_node(ND_PIPELINE);
+    node->inpipe[0] = STDIN_FILENO;
+    node->inpipe[1] = -1;
+    node->outpipe[0] = -1;
+    node->outpipe[1] = STDOUT_FILENO;
+    node->command = simple_command(&token, token);
+    if(equal_op(token, "|"))
+        node->next = pipeline(&token ,token->next);
+    *rest = token;
     return node;
+}
+
+bool	is_control_operator(t_token *tok)
+{
+	static char	*const	operators[] = {"||", "&", "&&", ";", ";;", "(", ")", "|", "\n"};
+	size_t				i = 0;
+
+	while (i < sizeof(operators) / sizeof(*operators))
+	{
+		if (startswith(tok->word, operators[i]))
+			return (true);
+		i++;
+	}
+	return (false);
+}
+
+t_node	*simple_command(t_token **rest, t_token *tok)
+{
+	t_node	*node;
+
+	node = new_node(ND_SIMPLE_CMD);
+	append_command_element(node, &tok, tok);
+	while (tok && !at_eof(tok) && !is_control_operator(tok))
+		append_command_element(node, &tok, tok);
+	*rest = tok;
+	return (node);
 }
 
 t_node	*redirect_out(t_token **rest, t_token *token)

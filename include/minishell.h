@@ -29,6 +29,7 @@ typedef struct s_token
 }t_token;
 
 typedef enum e_node_type {
+    ND_PIPELINE,
     ND_SIMPLE_CMD,
 	ND_REDIR_OUT,
 	ND_REDIR_IN,
@@ -51,6 +52,10 @@ typedef struct s_node
     t_token *delimiter;
 	int			filefd;
 	int			stashed_targetfd;
+	// PIPELINE
+	int			inpipe[2];
+	int			outpipe[2];
+	t_node		*command;
 } t_node;
 
 // error.c
@@ -92,8 +97,13 @@ void append_token(t_token **tokens, t_token *token);
 t_token *token_dup(t_token *token);
 
 // redirect.c
-int		open_redir_file(t_node *redirects);
+int		open_redir_file(t_node *node);
 void	do_redirect(t_node *redirects);
 void	reset_redirect(t_node *redirects);
+
+// pipe.c
+void	prepare_pipe(t_node *node);
+void	prepare_pipe_child(t_node *node);
+void	prepare_pipe_parent(t_node *node);
 
 #endif

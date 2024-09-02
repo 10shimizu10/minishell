@@ -40,35 +40,6 @@ bool startswith(const char *s, const char* keyword)
     return (memcmp(s, keyword, strlen(keyword)) == 0);
 }
 
-bool	is_control_operator(const char *s)
-{
-    static char *const operators[] = {"||", "&", "&&", ";", ";;", "(", ")", "|", "\n"};
-    size_t i  = 0;
-
-    while(i < sizeof(operators) / sizeof(*operators))
-    {
-        if(startswith(s, operators[i]))
-            return true;
-        i++;
-    }
-    return false;
-}
-
-bool	is_redirection_operator(const char *s)
-{
-	static char	*const operators[] = {">", "<", ">>", "<<"};
-	size_t				i = 0;				
-
-	while (i < sizeof(operators) / sizeof(*operators))
-	{
-		if (startswith(s, operators[i]))
-			return (true);
-		i++;
-	}
-	return (false);
-
-}
-
 bool is_metacharacter(char c)
 {
 	if (is_blank(c))
