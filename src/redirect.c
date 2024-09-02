@@ -1,54 +1,86 @@
+// #include <fcntl.h>
+// #include <unistd.h>
+// #include "minishell.h"
+
+// int	stashfd(int fd)
+// {
+// 	int	stashfd;
+
+// 	stashfd = fcntl(fd, F_DUPFD, 10);
+// 	if (stashfd < 0)
+// 		fatal_error("fcntl");
+// 	if (close(fd) < 0)
+// 		fatal_error("close");
+// 	return (stashfd);
+// }
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <errno.h>
 #include "minishell.h"
 
+static bool	is_valid_fd(int fd)
+{
+	struct stat	st;
+
+	if (fd < 0)
+		return (false);
+	errno = 0;
+	if (fstat(fd, &st) < 0 && errno == EBADF)
+		return (false);
+	return (true);
+}
 
 int	stashfd(int fd)
 {
 	int	stashfd;
 
-	stashfd = fcntl(fd, F_DUPFD, 10);
-	if (stashfd < 0)
-		fatal_error("fcntl");
-	if (close(fd) < 0)
-		fatal_error("close");
+	if (!is_valid_fd(fd))
+	{
+		errno = EBADF;
+		return (-1);
+	}
+	stashfd = 10;
+	while (is_valid_fd(stashfd))
+		stashfd++;
+	stashfd = dup2(fd, stashfd);
+	close(fd);
 	return (stashfd);
 }
 
-// int stashfd(int fd)
-// {
-// 	int stashfd;
-
-// 	// fdを10以上のファイルディスクリプタに複製します
-// 	stashfd = dup2(fd, 10);
-// 	if (stashfd < 0)
-// 		fatal_error("dup2");
-// 	if (close(fd) < 0)
-// 		fatal_error("close");
-// 	return stashfd;
-// }
-
-void	open_redir_file(t_node *redir)
+int	open_redir_file(t_node *redir)
 {
 	if (redir == NULL)
-		return ;
+		return (0);
 	if (redir->kind == ND_REDIR_OUT)
 		redir->filefd = open(redir->filename->word, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	else
+	else if (redir->kind == ND_REDIR_IN)
+		redir->filefd = open(redir->filename->word, O_RDONLY);
+	else if (redir->kind == ND_REDIR_APPEND)
+		redir->filefd = open(redir->filename->word, O_CREAT | O_WRONLY | O_APPEND, 0644);
+    else
 		todo("open_redir_file");
+	if (redir->filefd < 0)
+	{
+		xperror(redir->filename->word);
+		return (-1);
+	}
 	redir->filefd = stashfd(redir->filefd);
-	open_redir_file(redir->next);
+	return (open_redir_file(redir->next));
 }
 
 void	do_redirect(t_node *redir)
 {
 	if (redir == NULL)
 		return ;
-	if (redir->kind == ND_REDIR_OUT)
+	if (redir->kind == ND_REDIR_OUT || redir->kind == ND_REDIR_IN || redir->kind == ND_REDIR_APPEND)
 	{
 		redir->stashed_targetfd = stashfd(redir->targetfd);
 		dup2(redir->filefd, redir->targetfd);
 	}
+	else
+		todo("do_redirect");
 	do_redirect(redir->next);
 }
 
@@ -58,10 +90,12 @@ void	reset_redirect(t_node *redir)
 	if (redir == NULL)
 		return ;
 	reset_redirect(redir->next);
-	if (redir->kind == ND_REDIR_OUT)
+	if (redir->kind == ND_REDIR_OUT || redir->kind == ND_REDIR_IN || redir->kind == ND_REDIR_APPEND)
 	{
 		close(redir->filefd);
 		close(redir->targetfd);
 		dup2(redir->stashed_targetfd, redir->targetfd);
 	}
+	else
+		todo("reset_redirect");
 }
