@@ -97,6 +97,7 @@ t_node *redirect_heredoc(t_token **rest, t_token *token)
 
     node = new_node(ND_REDIR_HEREDOC);
     node->delimiter = token_dup(token->next);
+
     node->targetfd = STDIN_FILENO;
     *rest = token->next->next;
     return node;
