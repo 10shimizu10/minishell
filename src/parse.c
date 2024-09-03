@@ -97,7 +97,9 @@ t_node *redirect_heredoc(t_token **rest, t_token *token)
 
     node = new_node(ND_REDIR_HEREDOC);
     node->delimiter = token_dup(token->next);
-
+    	if (strchr(node->delimiter->word, SINGLE_QUOTE_CHAR) == NULL
+		&& strchr(node->delimiter->word, DOUBLE_QUOTE_CHAR) == NULL)
+		node->is_delim_unquoted = true;
     node->targetfd = STDIN_FILENO;
     *rest = token->next->next;
     return node;
