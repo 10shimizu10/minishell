@@ -1,7 +1,3 @@
-#############
-# Variables #
-#############
-
 NAME     = minishell
 CC       = cc
 RLDIR    = $(shell brew --prefix readline)
@@ -18,12 +14,12 @@ SRCS     = src/main.c\
 		   src/pipe.c\
 		   src/exec.c\
 		   src/signal.c\
+		   src/builtin.c\
+		   src/builtin_exit.c\
+		   src/map.c\
+		   src/env.c\
 
 OBJS     = $(SRCS:%.c=%.o)
-
-#################
-# General rules #
-#################
 
 all: $(NAME)
 
@@ -41,10 +37,6 @@ re: fclean all
 test: all
 	./test.sh
 .PHONY: all clean fclean re test
-
-##########################
-# Platform Compatibility #
-##########################
 
 # Linux | Darwin
 OS := $(shell uname -s)

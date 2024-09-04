@@ -1,6 +1,10 @@
 #include <unistd.h>
 #include <signal.h>
 #include "minishell.h"
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
 
 volatile sig_atomic_t	sig = 0;
 

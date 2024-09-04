@@ -38,6 +38,7 @@ int main()
     char* line;
 
     rl_outstream = stderr;
+	initenv();
 	setup_signal();
     last_status = 0;
 
