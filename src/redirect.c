@@ -24,6 +24,8 @@
 #include "minishell.h"
 #include <string.h>
 
+bool	readline_interrupted = false;
+
 static bool	is_valid_fd(int fd)
 {
 	struct stat	st;
@@ -60,11 +62,17 @@ int	read_heredoc(const char *delimiter, bool is_delim_unquoted)
 
 	if (pipe(pfd) < 0)
 		fatal_error("pipe");
+    readline_interrupted = false;
 	while (1)
 	{
 		line = readline("> ");
 		if (line == NULL)
 			break ;
+		if (readline_interrupted)
+		{
+			free(line);
+			break ;
+		}
 		if (strcmp(line, delimiter) == 0)
 		{
 			free(line);
@@ -77,6 +85,11 @@ int	read_heredoc(const char *delimiter, bool is_delim_unquoted)
 		free(line);
 	}
 	close(pfd[1]);
+	if (readline_interrupted)
+	{
+		close(pfd[0]);
+		return (-1);
+	}
 	return (pfd[0]);
 }
 
@@ -106,7 +119,8 @@ int	open_redir_file(t_node *node)
 		assert_error("oopen_redir_file");
 	if (node->filefd < 0)
 	{
-		xperror(node->filename->word);
+		if (node->kind == ND_REDIR_OUT || node->kind == ND_REDIR_APPEND || node->kind == ND_REDIR_IN)
+			xperror(node->filename->word);
 		return (-1);
 	}
 	node->filefd = stashfd(node->filefd);

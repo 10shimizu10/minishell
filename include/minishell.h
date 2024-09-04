@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
-
+# include <signal.h>
 
 #define ERROR_TOKENIZE 258
 #define ERROR_PARSE 258;
@@ -11,8 +11,11 @@
 # define SINGLE_QUOTE_CHAR '\''
 # define DOUBLE_QUOTE_CHAR '"'
 
-extern int  last_status;
-extern bool syntax_error;
+extern int						last_status;
+extern bool						syntax_error;
+extern bool						readline_interrupted;
+extern volatile sig_atomic_t	sig;
+
 
 typedef enum e_token_type{
     TOKEN_WORD,
@@ -111,5 +114,10 @@ void	prepare_pipe_parent(t_node *node);
 
 // exec.c
 int		exec(t_node *node);
+
+// signal.h
+
+void	setup_signal(void);
+void	reset_signal(void);
 
 #endif
