@@ -86,6 +86,7 @@ void	err_exit(const char *location, const char *msg, int status) __attribute__((
 void    tokenize_error(const char *location, char **rest, char *line);
 void    parse_error(const char *location, t_token **rest, t_token * token);
 void    xperror(const char *location);
+void	builtin_error(const char *func, const char *name, const char *err);
 
 // tokenize.c
 t_token *tokenize(char *line);
@@ -142,6 +143,9 @@ int		exec_builtin(t_node *node);
 // builtin_exit.c
 bool	is_numeric(char *s);
 int		builtin_exit(char **argv);
+
+// builtin_export.c
+int		builtin_export(char **argv);
 
 // map.c
 t_item	*item_new(char *name, char *value);
