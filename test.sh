@@ -391,7 +391,7 @@ assert 'export nosuch="nosuch2=hoge"\nexport $nosuch\n export | grep nosuch | so
 
 ## env
 print_desc "Output of 'env' differs, but it's ok."
-assert 'env' # order of variables, default variables differs...
+# assert 'env' # order of variables, default variables differs...
 assert 'env | grep hoge | sort'
 
 ## cd
