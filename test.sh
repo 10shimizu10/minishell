@@ -1,10 +1,19 @@
+
 #!/bin/bash
 RED="\033[31m"
 GREEN="\033[32m"
 YELLOW="\033[33m"
 RESET="\033[0m"
-OK=$GREEN"OK"$RESET
-NG=$RED"NG"$RESET
+OK_TEXT="OK"
+NG_TEXT="NG"
+diff_ok_count=0
+diff_ng_count=0
+status_ok_count=0
+status_ng_count=0
+log_dir="log"
+mkdir -p $log_dir
+log_file="$log_dir/$(date '+%Y%m%d%H%M').log"
+
 cat <<EOF | gcc -xc -o a.out -
 #include <stdio.h>
 int main() { printf("hello from a.out\n"); }
@@ -16,23 +25,19 @@ int main(int argc, char *argv[]) {
 		printf("argv[%d] = %s\n", i, argv[i]);
 }
 EOF
-
 cat <<EOF | gcc -xc -o exit42 -
 int main() { return 42; }
 EOF
-
 print_desc() {
-	echo -e $YELLOW"$1"$RESET
+	echo -e "$YELLOW$1$RESET"
 }
-
 cleanup() {
-	rm -f cmp out a.out print_args exit42 infinite_loop
+	rm -f cmp out a.out print_args exit42 infinite_loop no_exec_perm no_read_perm
 }
-
 assert() {
 	COMMAND="$1"
 	shift
-	printf '%-60s:' "[$COMMAND]"
+	printf '%-60s:' "[$COMMAND]" | tee -a $log_file
 	# exit status
 	echo -n -e "$COMMAND" | bash >cmp 2>&-
 	expected=$?
@@ -46,50 +51,116 @@ assert() {
 	do
 		mv "$arg" "$arg"".out"
 	done
-
-	diff cmp out >/dev/null && echo -e -n "  diff $OK" || echo -e -n "  diff $NG"
-
-	if [ "$actual" = "$expected" ]; then
-		echo -e -n "  status $OK"
+	diff cmp out >/dev/null && diff_result="$OK_TEXT" || diff_result="$NG_TEXT"
+	if [ "$diff_result" = "$OK_TEXT" ]; then
+		echo -e -n "  diff $OK_TEXT" | tee -a $log_file
+		diff_ok_count=$((diff_ok_count + 1))
 	else
-		echo -e -n "  status $NG, expected $expected but got $actual"
+		echo -e -n "  diff $NG_TEXT" | tee -a $log_file
+		diff_ng_count=$((diff_ng_count + 1))
+	fi
+	if [ "$actual" = "$expected" ]; then
+		echo -e -n "  status $OK_TEXT" | tee -a $log_file
+		status_ok_count=$((status_ok_count + 1))
+	else
+		echo -e -n "  status $NG_TEXT, expected $expected but got $actual" | tee -a $log_file
+		status_ng_count=$((status_ng_count + 1))
 	fi
 	for arg in "$@"
 	do
-		echo -n "  [$arg] "
-		diff "$arg"".cmp" "$arg"".out" >/dev/null && echo -e -n "$OK" || echo -e -n "$NG"
+		echo -n "  [$arg] " | tee -a $log_file
+		diff "$arg"".cmp" "$arg"".out" >/dev/null && result="$OK_TEXT" || result="$NG_TEXT"
+		if [ "$result" = "$OK_TEXT" ]; then
+			echo -e -n "$OK_TEXT" | tee -a $log_file
+			diff_ok_count=$((diff_ok_count + 1))
+		else
+			echo -e -n "$NG_TEXT" | tee -a $log_file
+			diff_ng_count=$((diff_ng_count + 1))
+		fi
 		rm -f "$arg"".cmp" "$arg"".out"
 	done
-	echo
+	echo | tee -a $log_file
 }
 
 # Empty line (EOF)
 assert ''
+
 # Absolute path commands without args 
 assert '/bin/pwd'
 assert '/bin/echo'
 assert '/bin/ls'
+
 # Search command path without args
 assert 'pwd'
 assert 'echo'
 assert 'ls'
 assert './a.out'
+
 ## no such command
 assert 'a.out'
 assert 'nosuchfile'
+
+## command not found
+assert '""'
+# assert '.' # . is a builtin command in bash
+assert '..'
+
+## is a directory
+assert './'
+assert '/'
+assert '/etc'
+assert '/etc/'
+assert '////'
+
+## Permission denied
+echo "int main() { }" | gcc -xc -o no_exec_perm -
+chmod -x no_exec_perm
+assert 'no_exec_perm'
+assert './no_exec_perm'
+echo "int main() { }" | gcc -xc -o no_read_perm -
+chmod -r no_read_perm
+assert 'no_read_perm'
+assert './no_read_perm'
+
+mkdir -p /tmp/a /tmp/b
+echo "int main() { return 1; }" | gcc -xc -o /tmp/a/simple_test -
+echo "int main() { return 2; }" | gcc -xc -o /tmp/b/simple_test -
+
+print_desc "/tmp/a /tmp/b both with permission"
+assert 'unset PATH\nexport PATH="/tmp/a:/tmp/b"\nsimple_test'
+assert 'unset PATH\nexport PATH="/tmp/b:/tmp/a"\nsimple_test'
+
+print_desc "/tmp/a /tmp/b both without permission"
+chmod -x /tmp/a/simple_test; chmod -x /tmp/b/simple_test;
+assert 'unset PATH\nexport PATH="/tmp/a:/tmp/b"\nsimple_test'
+assert 'unset PATH\nexport PATH="/tmp/b:/tmp/a"\nsimple_test'
+
+print_desc "a with permission, b without permission"
+chmod +x /tmp/a/simple_test; chmod -x /tmp/b/simple_test;
+assert 'unset PATH\nexport PATH="/tmp/a:/tmp/b"\nsimple_test'
+assert 'unset PATH\nexport PATH="/tmp/b:/tmp/a"\nsimple_test'
+
+print_desc "a without permission, b with permission"
+chmod -x /tmp/a/simple_test; chmod +x /tmp/b/simple_test;
+assert 'unset PATH\nexport PATH="/tmp/a:/tmp/b"\nsimple_test'
+assert 'unset PATH\nexport PATH="/tmp/b:/tmp/a"\nsimple_test'
+
 # Tokenize
 ## unquoted word
 assert 'ls /'
 assert 'echo hello    world     '
 assert 'nosuchfile\n\n'
+
 ## single quote
 assert "./print_args 'hello   world' '42Tokyo'"
 assert "echo 'hello   world' '42Tokyo'"
 assert "echo '\"hello   world\"' '42Tokyo'"
+
 ## double quote
 assert './print_args "hello   world" "42Tokyo"'
 assert 'echo "hello   world" "42Tokyo"'
 assert "echo \"'hello   world'\" \"42Tokyo\""
+
 ## combination
 assert "echo hello'      world'"
 assert "echo hello'  world  '\"  42Tokyo  \""
@@ -117,6 +188,15 @@ assert 'cat <<EOF\nhello\nworld\nEOF\nNOPRINT'
 assert 'cat <<EOF<<eof\nhello\nworld\nEOF\neof\nNOPRINT'
 assert 'cat <<EOF\nhello\nworld'
 assert 'cat <<E"O"F\nhello\nworld\nEOF\nNOPRINT'
+assert 'cat <<EOF   \n$USER\n$NO_SUCH_VAR\n$FOO$BAR\nEOF'
+assert 'cat <<"EOF" \n$USER\n$NO_SUCH_VAR\n$FOO$BAR\nEOF'
+assert 'cat <<EO"F" \n$USER\n$NO_SUCH_VAR\n$FOO$BAR\nEOF'
+(
+	print_desc 'export EOF="eof"'
+	export EOF="eof"
+	assert 'cat <<$EOF         \neof\n$EOF\nEOF'
+	assert 'cat <<"$EOF"       \neof\n$EOF\nEOF'
+)
 
 # Pipe
 assert 'cat Makefile | grep minishell'
@@ -132,12 +212,63 @@ assert 'echo $?'
 assert 'invalid\necho $?\necho $?'
 assert 'exit42\necho $?\necho $?'
 assert 'exit42\n\necho $?\necho $?'
-assert 'cat <<EOF   \n$USER\n$NO_SUCH_VAR\n$FOO$BAR\nEOF'
-assert 'cat <<"EOF" \n$USER\n$NO_SUCH_VAR\n$FOO$BAR\nEOF'
-assert 'cat <<EO"F" \n$USER\n$NO_SUCH_VAR\n$FOO$BAR\nEOF'
-export EOF="eof"
-assert 'cat <<$EOF         \neof\n$EOF\nEOF'
-assert 'cat <<"$EOF"       \neof\n$EOF\nEOF'
+
+# Word Splitting
+assert 'export FOO="echo hello"\n$FOO'
+assert 'export TEST="cho -n"\ne$TEST'
+assert 'export FOO="a       b"\necho $FOO'
+assert 'export FOO="a       b"\necho hello$FOO'
+assert 'export FOO="a       b"\necho $FOO"world"'
+assert 'export FOO="a       b"\necho hello$FOO"world"'
+assert 'export FOO="echo a      b"\n$FOO'
+
+assert 'export IFS=""\nexport FOO="echo hello"\n$FOO'
+assert 'export IFS=""\nexport TEST="cho -n"\ne$TEST'
+assert 'export IFS=""\nexport FOO="a       b"\n./print_args $FOO'
+assert 'export IFS=""\nexport FOO="a       b"\n./print_args hello$FOO'
+assert 'export IFS=""\nexport FOO="a       b"\n./print_args $FOO"world"'
+assert 'export IFS=""\nexport FOO="a       b"\n./print_args hello$FOO"world"'
+assert 'export IFS=""\nexport FOO="./print_args a      b"\n$FOO'
+
+assert 'export IFS="abc"\nexport FOO="./print_argsahellobbbbbbworldccc"\n$FOO'
+assert 'export IFS="abc"\nexport TEST="choa-n"\ne$TEST'
+assert 'export IFS="abc"\nexport FOO="xabcabcy"\n./print_args $FOO'
+assert 'export IFS="abc"\nexport FOO="xabcabcy"\n./print_args hello$FOO'
+assert 'export IFS="abc"\nexport FOO="xabcabcy"\n./print_args $FOO"world"'
+assert 'export IFS="abc"\nexport FOO="xabcabcy"\n./print_args hello$FOO"world"'
+assert 'export IFS="abc"\nexport FOO="./print_argsaaaaaxabcabcy"\n$FOO'
+
+assert 'export IFS="a"\nexport FOO="aaahelloaaaworldaaa"\n./print_args $FOO'
+assert 'export IFS="a "\nexport FOO="   hello   world   "\n./print_args $FOO'
+assert 'export IFS="a "\nexport FOO=" a a hello a a world a a "\n./print_args $FOO'
+assert 'export IFS="a "\nexport FOO="aaa"\n./print_args $FOO'
+assert 'export IFS="a "\nexport FOO="helloaaa"\n./print_args $FOO'
+assert 'export IFS="a "\nexport FOO="helloaaaworld"\n./print_args $FOO'
+assert 'export IFS="a "\nexport FOO="aaahelloaaaworldaaa"\n./print_args $FOO'
+
+assert 'export IFS=" :"\nexport FOO="hello: : :"\n./print_args $FOO'
+assert 'export IFS=" :"\nexport FOO="hello: : : "\n./print_args $FOO'
+assert 'export IFS=" :"\nexport FOO="hello : : :"\n./print_args $FOO'
+assert 'export IFS=" :"\nexport FOO="hello : : : "\n./print_args $FOO'
+
+assert 'export IFS=" :"\nexport FOO=": : :hello: : :"\n./print_args $FOO'
+assert 'export IFS=" :"\nexport FOO=": : : hello: : : "\n./print_args $FOO'
+assert 'export IFS=" :"\nexport FOO=" : : :hello : : :"\n./print_args $FOO'
+assert 'export IFS=" :"\nexport FOO=" : : : hello : : : "\n./print_args $FOO'
+
+assert 'export IFS=" :"\nexport FOO="hello: : :world"\n./print_args $FOO'
+assert 'export IFS=" :"\nexport FOO="hello : : :world"\n./print_args $FOO'
+assert 'export IFS=" :"\nexport FOO="hello: : : world"\n./print_args $FOO'
+assert 'export IFS=" :"\nexport FOO="hello : : : world"\n./print_args $FOO'
+
+assert 'echo "$IFS"'
+
+print_desc 'export IFS=":"'
+(
+	export IFS=":"
+	assert 'echo "$IFS"'
+	assert 'export FOO="hello:world:42Tokyo"\n./print_args $FOO'
+)
 
 # Signal handling
 echo "int main() { while (1) ; }" | gcc -xc -o infinite_loop -
@@ -215,12 +346,22 @@ assert './infinite_loop'
 ## exit
 assert 'exit'
 assert 'exit 42'
+assert 'exit -42'
+assert 'exit +42'
 assert 'exit ""'
 assert 'exit hello'
 assert 'exit 42Tokyo'
 assert 'exit 1 2'
+assert 'exit 9223372036854775806'
+assert 'exit 9223372036854775807'
+assert 'exit 9223372036854775808'
+assert 'exit -9223372036854775807'
+assert 'exit -9223372036854775808'
+assert 'exit -9223372036854775809'
 
 ## export
+print_desc "Output of 'export' differs, but it's ok."
+assert 'export' # order of variables, default variables differs...
 assert 'export | grep nosuch | sort'
 assert 'export nosuch\n export | grep nosuch | sort'
 assert 'export nosuch=fuga\n export | grep nosuch | sort'
@@ -232,5 +373,94 @@ assert 'export [invalid] nosuch hoge=nosuch\n export | grep nosuch | sort'
 assert 'export nosuch [invalid] hoge=nosuch\n export | grep nosuch | sort'
 assert 'export nosuch hoge=nosuch [invalid]\n export | grep nosuch | sort'
 assert 'export nosuch="nosuch2=hoge"\nexport $nosuch\n export | grep nosuch | sort'
+
+## unset
+(
+	print_desc 'export hoge fuga=fuga'
+	export hoge fuga=fuga
+	assert 'unset'
+	assert 'unset hoge'
+	assert 'unset fuga'
+	assert 'unset nosuch'
+	assert 'unset [invalid]'
+	assert 'unset hoge fuga'
+	assert 'unset hoge nosuch fuga'
+	assert 'unset fuga \n export | echo $fuga'
+	assert 'unset [invalid] fuga \n echo $fuga'
+)
+
+## env
+print_desc "Output of 'env' differs, but it's ok."
+assert 'env' # order of variables, default variables differs...
+assert 'env | grep hoge | sort'
+
+## cd
+assert 'cd'
+assert 'cd .'
+assert 'cd ..'
+assert 'cd ///'
+assert 'cd /tmp'
+assert 'cd /tmp/'
+assert 'cd /tmp///'
+assert 'cd /../../../././.././'
+assert 'cd src'
+assert 'unset HOME\ncd'
+
+assert 'cd \n echo $PWD'
+assert 'cd \n echo $PWD'
+assert 'cd .\n echo $PWD'
+assert 'cd ..\n echo $PWD'
+assert 'cd ///\n echo $PWD'
+assert 'cd /tmp\n echo $PWD'
+assert 'cd /tmp/\n echo $PWD'
+assert 'cd /tmp///\n echo $PWD'
+assert 'cd /../../../././.././\n echo $PWD'
+assert 'cd src\n echo $PWD'
+assert 'unset HOME\ncd \n echo $PWD'
+
+## echo
+assert 'echo'
+assert 'echo hello'
+assert 'echo hello "    " world'
+assert 'echo -n'
+assert 'echo -n hello'
+assert 'echo -n hello world'
+assert 'echo hello -n'
+assert 'echo -nn'
+assert 'echo -n-n-n'
+assert 'echo ";|()"'
+
+## pwd
+assert 'pwd'
+assert 'cd\npwd'
+assert 'cd src\npwd'
+assert 'cd /etc\npwd'
+assert 'cd . \n pwd \n echo $PWD $OLDPWD'
+assert 'cd .. \n pwd \n echo $PWD $OLDPWD'
+assert 'cd /// \n pwd \n echo $PWD $OLDPWD'
+assert 'cd /tmp/// \n pwd \n echo $PWD $OLDPWD'
+assert 'unset PWD\npwd\ncd /etc\npwd'
+
+## export attribute
+assert 'unset PWD \n cd \n echo $PWD \ncd /tmp\necho $PWD'
+assert 'unset PWD\ncd\necho $OLDPWD\ncd /tmp\necho $OLDPWD'
+assert 'unset PWD\ncd\nexport|grep PWD\ncd /tmp\nexport|grep PWD'
+assert 'unset PWD\ncd\nenv|grep PWD\ncd /tmp\nenv|grep PWD'
+
+# カウント結果の表示
+echo -e "\nResults Summary:"
+echo -e "diff OK count: $diff_ok_count"
+echo -e "diff NG count: $diff_ng_count"
+echo -e "status OK count: $status_ok_count"
+echo -e "status NG count: $status_ng_count"
+
+# 結果をlogファイルに出力
+{
+  echo "Results Summary"
+  echo "diff OK count: $diff_ok_count"
+  echo "diff NG count: $diff_ng_count"
+  echo "status OK count: $status_ok_count"
+  echo "status NG count: $status_ng_count"
+} >> $log_file
 
 cleanup
