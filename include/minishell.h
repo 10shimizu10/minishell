@@ -19,6 +19,18 @@
 #include "minishell.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <limits.h>
+#include "minishell.h"
+#include <limits.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include "minishell.h"
+
+#include <string.h>
 
 #include <ctype.h>
 

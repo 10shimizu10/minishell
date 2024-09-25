@@ -1,26 +1,35 @@
-#include <stdlib.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
+/*   Updated: 2024/09/25 21:09:52 by a.               ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-#include <string.h>
-
-void append_char(char **s, char c)
+void	append_char(char **s, char c)
 {
-    size_t size;
-    char *new;
+	size_t	size;
+	char	*new;
 
-    size = 2;
-    if(*s)
-        size += strlen(*s);
-    new = malloc(size);
-    if(new == NULL)
-        fatal_error("malloc");
-    if(*s)
-        strlcpy(new, *s, size);
-    new[size - 2] = c;
-    new[size - 1] = '\0';
-    if(*s)
-        free(*s);
-    *s = new;
+	size = 2;
+	if (*s)
+		size += strlen(*s);
+	new = malloc(size);
+	if (new == NULL)
+		fatal_error("malloc");
+	if (*s)
+		strlcpy(new, *s, size);
+	new[size - 2] = c;
+	new[size - 1] = '\0';
+	if (*s)
+		free(*s);
+	*s = new;
 }
 
 void	remove_single_quote(char **dst, char **rest, char *p)
@@ -71,11 +80,10 @@ void	remove_quote(t_token *token)
 	if (token == NULL || token->kind != TOKEN_WORD || token->word == NULL)
 		return ;
 	p = token->word;
-    new_word = malloc(sizeof(char));
-    if (new_word == NULL)
-        fatal_error("malloc");
-
-    memset(new_word, 0, sizeof(char));
+	new_word = malloc(sizeof(char));
+	if (new_word == NULL)
+		fatal_error("malloc");
+	memset(new_word, 0, sizeof(char));
 	while (*p && !is_metacharacter(*p))
 	{
 		if (*p == SINGLE_QUOTE_CHAR)
@@ -91,23 +99,25 @@ void	remove_quote(t_token *token)
 }
 
 void	expand_quote_removal(t_node *node)
-{	
-    if (node == NULL)
+{
+	if (node == NULL)
 		return ;
 	remove_quote(node->args);
 	remove_quote(node->filename);
-    remove_quote(node->delimiter);
+	remove_quote(node->delimiter);
 	expand_quote_removal(node->redirects);
-    expand_quote_removal(node->command);
+	expand_quote_removal(node->command);
 	expand_quote_removal(node->next);
 }
 
-bool is_alpha(char c) {
-    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+bool	is_alpha(char c)
+{
+	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
 }
 
-bool is_digit(char c) {
-    return c >= '0' && c <= '9';
+bool	is_digit(char c)
+{
+	return (c >= '0' && c <= '9');
 }
 
 bool	is_alpha_under(char c)
@@ -207,7 +217,7 @@ void	append_double_quote(char **dst, char **rest, char *p)
 				assert_error("Unclosed double quote");
 			else if (is_variable(p))
 				expand_variable_str(dst, &p, p);
-    		else if (is_special_parameter(p))
+			else if (is_special_parameter(p))
 				expand_special_parameter_str(dst, &p, p);
 			else
 				append_char(dst, *p++);
@@ -228,11 +238,10 @@ void	expand_variable_token(t_token *token)
 	if (token == NULL || token->kind != TOKEN_WORD || token->word == NULL)
 		return ;
 	p = token->word;
-    new_word = malloc(1 * sizeof(char));
-    if (new_word == NULL)
-        fatal_error("malloc");
-
-    memset(new_word, 0, 1 * sizeof(char));
+	new_word = malloc(1 * sizeof(char));
+	if (new_word == NULL)
+		fatal_error("malloc");
+	memset(new_word, 0, 1 * sizeof(char));
 	if (new_word == NULL)
 		fatal_error("calloc");
 	while (*p && !is_metacharacter(*p))
@@ -243,7 +252,7 @@ void	expand_variable_token(t_token *token)
 			append_double_quote(&new_word, &p, p);
 		else if (is_variable(p))
 			expand_variable_str(&new_word, &p, p);
-        else if (is_special_parameter(p))
+		else if (is_special_parameter(p))
 			expand_special_parameter_str(&new_word, &p, p);
 		else
 			append_char(&new_word, *p++);
@@ -267,21 +276,21 @@ void	expand_variable(t_node *node)
 
 void	expand(t_node *node)
 {
-    expand_variable(node);
+	expand_variable(node);
 	expand_quote_removal(node);
 }
 
 char	*expand_heredoc_line(char *line)
 {
-	char	*new_word;
-	char	*p;
+	char *new_word;
+	char *p;
 
 	p = line;
-    new_word = malloc(1 * sizeof(char));
-    if (new_word == NULL)
-        fatal_error("malloc");
+	new_word = malloc(1 * sizeof(char));
+	if (new_word == NULL)
+		fatal_error("malloc");
 
-    memset(new_word, 0, 1 * sizeof(char));
+	memset(new_word, 0, 1 * sizeof(char));
 
 	while (*p)
 	{

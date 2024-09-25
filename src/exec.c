@@ -1,11 +1,16 @@
-#include <limits.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include "minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
+/*   Updated: 2024/09/25 21:09:57 by a.               ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <string.h>
+#include "minishell.h"
 
 char	*search_path(const char *filename);
 void	validate_access(const char *path, const char *filename);
@@ -35,6 +40,7 @@ char	*search_path_mode(const char *filename, int mode)
 	char	path[PATH_MAX];
 	char	*value;
 	char	*end;
+			char *dup;
 
 	value = xgetenv("PATH");
 	while (*value)
@@ -52,8 +58,6 @@ char	*search_path_mode(const char *filename, int mode)
 		strlcat(path, filename, PATH_MAX);
 		if (access(path, mode) == 0)
 		{
-			char	*dup;
-
 			dup = strdup(path);
 			if (dup == NULL)
 				fatal_error("strdup");
@@ -77,7 +81,6 @@ char	*search_path(const char *filename)
 	return (path);
 }
 
-
 void	validate_access(const char *path, const char *filename)
 {
 	struct stat	st;
@@ -96,14 +99,13 @@ void	validate_access(const char *path, const char *filename)
 		err_exit(filename, "is a directory", 126);
 	if (access(path, X_OK) < 0)
 		err_exit(path, "Permission denied", 126);
-
 }
 
-int	exec_nonbuiltin(t_node *node) __attribute__((noreturn));
+int		exec_nonbuiltin(t_node *node) __attribute__((noreturn));
 int	exec_nonbuiltin(t_node *node)
 {
-	char		*path;
-	char		**argv;
+	char	*path;
+	char	**argv;
 
 	do_redirect(node->command->redirects);
 	argv = token_list_to_argv(node->command->args);
@@ -119,7 +121,8 @@ int	exec_nonbuiltin(t_node *node)
 
 pid_t	exec_pipeline(t_node *node)
 {
-	pid_t		pid;
+	pid_t	pid;
+
 	if (node == NULL)
 		return (-1);
 	prepare_pipe(node);
@@ -129,7 +132,7 @@ pid_t	exec_pipeline(t_node *node)
 	else if (pid == 0)
 	{
 		// child process
-        reset_signal();
+		reset_signal();
 		prepare_pipe_child(node);
 		if (is_builtin(node))
 			exit(exec_builtin(node));
@@ -145,9 +148,9 @@ pid_t	exec_pipeline(t_node *node)
 
 int	wait_pipeline(pid_t last_pid)
 {
-	pid_t	wait_result;
-	int		status;
-	int		wstatus;
+	pid_t wait_result;
+	int status;
+	int wstatus;
 
 	while (1)
 	{

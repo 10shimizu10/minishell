@@ -1,11 +1,18 @@
-#include <stdlib.h>
-#include <unistd.h>
-#include <limits.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
+/*   Updated: 2024/09/25 21:08:48 by a.               ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-#include <string.h>
-
-t_map	*envmap;
+t_map		*envmap;
 
 static void	envmap_init(t_map *map, char **ep);
 
@@ -48,7 +55,7 @@ char	**get_environ(t_map *map)
 
 static void	envmap_init(t_map *map, char **ep)
 {
-	char	cwd[PATH_MAX];
+	char cwd[PATH_MAX];
 	while (*ep)
 	{
 		map_put(map, *ep, false);

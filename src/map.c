@@ -1,8 +1,16 @@
-#include <stdlib.h>
-#include "minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   map.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
+/*   Updated: 2024/09/25 21:10:16 by a.               ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <stdio.h>
-#include <string.h>
+#include "minishell.h"
 
 bool	is_identifier(const char *s);
 bool	is_alpha_under(char c);
@@ -105,7 +113,7 @@ int	map_unset(t_map *map, const char *name)
 	return (0);
 }
 
-// name, value 
+// name, value
 int	map_set(t_map *map, const char *name, const char *value)
 {
 	t_item	*cur;
@@ -187,8 +195,8 @@ int	map_put(t_map *map, const char *string, bool allow_empty_value)
 
 size_t	map_len(t_map *map, bool count_null_value)
 {
-	size_t	len;
-	t_item	*item;
+	size_t len;
+	t_item *item;
 
 	len = 0;
 	item = map->item_head.next;
