@@ -1,8 +1,16 @@
-#include <stdlib.h>
-#include <errno.h>
-#include "minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin_exit.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
+/*   Updated: 2024/09/25 21:03:38 by a.               ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <ctype.h>
+#include "minishell.h"
 
 bool	is_numeric(char *s)
 {
@@ -19,9 +27,9 @@ bool	is_numeric(char *s)
 
 int	builtin_exit(char **argv)
 {
-	long	res;
-	char	*arg;
-	char	*endptr;
+	long res;
+	char *arg;
+	char *endptr;
 
 	if (argv[1] == NULL)
 		exit(last_status);

@@ -1,8 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
+/*   Updated: 2024/09/25 21:04:46 by a.               ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-#include <string.h>
-
-int		exec_builtin(t_node *node)
+int	exec_builtin(t_node *node)
 {
 	int		status;
 	char	**argv;
@@ -32,13 +42,14 @@ int		exec_builtin(t_node *node)
 
 bool	is_builtin(t_node *node)
 {
-	const char		*cmd_name;
-	char			*builtin_commands[] = {"exit", "export", "unset", "env", "cd", "echo", "pwd"};
+	const char *cmd_name;
+	char *builtin_commands[] = {"exit", "export", "unset", "env", "cd", "echo",
+		"pwd"};
 
-	unsigned int	i;
+	unsigned int i;
 
-	if (node == NULL || node->command == NULL | node->command->args == NULL ||
-			node->command->args->word == NULL)
+	if (node == NULL || node->command == NULL | node->command->args == NULL
+		|| node->command->args->word == NULL)
 		return (false);
 	cmd_name = node->command->args->word;
 	i = 0;

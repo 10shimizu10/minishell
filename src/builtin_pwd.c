@@ -1,10 +1,16 @@
-#include <unistd.h>
-#include <limits.h>
-#include <sys/stat.h>
-#include "minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin_pwd.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
+/*   Updated: 2024/09/25 21:04:24 by a.               ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <stdio.h>
-#include <string.h>
+#include "minishell.h"
 
 bool	equal_inode(const char *path1, const char *path2)
 {
@@ -22,8 +28,8 @@ bool	equal_inode(const char *path1, const char *path2)
 
 int	builtin_pwd(char **argv)
 {
-	char	*pwd;
-	char	cwd[PATH_MAX];
+	char *pwd;
+	char cwd[PATH_MAX];
 
 	(void)argv;
 	pwd = xgetenv("PWD");

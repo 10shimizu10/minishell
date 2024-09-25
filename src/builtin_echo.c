@@ -1,13 +1,22 @@
-#include <unistd.h>
-#include "minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin_echo.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
+/*   Updated: 2024/09/25 21:03:25 by a.               ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <string.h>
+#include "minishell.h"
 
 int	builtin_echo(char **argv)
 {
-	bool	is_first_arg;
-	bool	echo_newline;
-	size_t	i;
+	bool is_first_arg;
+	bool echo_newline;
+	size_t i;
 
 	i = 1;
 	echo_newline = true;

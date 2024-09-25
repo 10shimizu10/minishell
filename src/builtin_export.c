@@ -1,6 +1,16 @@
-#include "minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin_export.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
+/*   Updated: 2024/09/25 21:05:26 by a.               ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <stdio.h>
+#include "minishell.h"
 
 void	print_allenv(void)
 {
@@ -19,8 +29,8 @@ void	print_allenv(void)
 
 int	builtin_export(char **argv)
 {
-	size_t	i;
-	int		status;
+	size_t i;
+	int status;
 
 	if (argv[1] == NULL)
 	{
