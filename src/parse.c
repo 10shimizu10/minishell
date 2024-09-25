@@ -6,45 +6,45 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/25 21:10:07 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/25 21:18:05 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-
 bool	equal_op(t_token *tok, char *op);
 void	append_node(t_node **node, t_node *elm);
-t_node *pipeline(t_token **rest, t_token *token);
-t_node *simple_command(t_token **rest, t_token *token);
+t_node	*pipeline(t_token **rest, t_token *token);
+t_node	*simple_command(t_token **rest, t_token *token);
 
-
-t_node *parse(t_token *token)
+t_node	*parse(t_token *token)
 {
-    return (pipeline(&token, token));
+	return (pipeline(&token, token));
 }
 
-t_node *pipeline(t_token **rest, t_token *token)
+t_node	*pipeline(t_token **rest, t_token *token)
 {
-    t_node *node;
+	t_node	*node;
 
-    node = new_node(ND_PIPELINE);
-    node->inpipe[0] = STDIN_FILENO;
-    node->inpipe[1] = -1;
-    node->outpipe[0] = -1;
-    node->outpipe[1] = STDOUT_FILENO;
-    node->command = simple_command(&token, token);
-    if(equal_op(token, "|"))
-        node->next = pipeline(&token ,token->next);
-    *rest = token;
-    return node;
+	node = new_node(ND_PIPELINE);
+	node->inpipe[0] = STDIN_FILENO;
+	node->inpipe[1] = -1;
+	node->outpipe[0] = -1;
+	node->outpipe[1] = STDOUT_FILENO;
+	node->command = simple_command(&token, token);
+	if (equal_op(token, "|"))
+		node->next = pipeline(&token, token->next);
+	*rest = token;
+	return (node);
 }
 
 bool	is_control_operator(t_token *tok)
 {
-	static char	*const	operators[] = {"||", "&", "&&", ";", ";;", "(", ")", "|", "\n"};
-	size_t				i = 0;
+	size_t	i;
 
+	static char *const operators[] = {"||", "&", "&&", ";", ";;", "(", ")", "|",
+		"\n"};
+	i = 0;
 	while (i < sizeof(operators) / sizeof(*operators))
 	{
 		if (startswith(tok->word, operators[i]))
@@ -99,18 +99,18 @@ t_node	*redirect_append(t_token **rest, t_token *token)
 	return (node);
 }
 
-t_node *redirect_heredoc(t_token **rest, t_token *token)
+t_node	*redirect_heredoc(t_token **rest, t_token *token)
 {
-    t_node *node;
+	t_node	*node;
 
-    node = new_node(ND_REDIR_HEREDOC);
-    node->delimiter = token_dup(token->next);
-    	if (strchr(node->delimiter->word, SINGLE_QUOTE_CHAR) == NULL
+	node = new_node(ND_REDIR_HEREDOC);
+	node->delimiter = token_dup(token->next);
+	if (strchr(node->delimiter->word, SINGLE_QUOTE_CHAR) == NULL
 		&& strchr(node->delimiter->word, DOUBLE_QUOTE_CHAR) == NULL)
 		node->is_delim_unquoted = true;
-    node->targetfd = STDIN_FILENO;
-    *rest = token->next->next;
-    return node;
+	node->targetfd = STDIN_FILENO;
+	*rest = token->next->next;
+	return (node);
 }
 
 void	append_command_element(t_node *command, t_token **rest, t_token *token)
@@ -126,17 +126,16 @@ void	append_command_element(t_node *command, t_token **rest, t_token *token)
 		append_node(&command->redirects, redirect_in(&token, token));
 	else if (equal_op(token, ">>") && token->next->kind == TOKEN_WORD)
 		append_node(&command->redirects, redirect_append(&token, token));
-    else if(equal_op(token, "<<") && token->next->kind == TOKEN_WORD)
-        append_node(&command->redirects, redirect_heredoc(&token, token));
-
+	else if (equal_op(token, "<<") && token->next->kind == TOKEN_WORD)
+		append_node(&command->redirects, redirect_heredoc(&token, token));
 	else
 		todo("append_command_element");
 	*rest = token;
 }
 
-bool at_eof(t_token *token)
+bool	at_eof(t_token *token)
 {
-    return (token->kind == TOKEN_EOF);
+	return (token->kind == TOKEN_EOF);
 }
 
 bool	equal_op(t_token *token, char *op)
@@ -146,27 +145,26 @@ bool	equal_op(t_token *token, char *op)
 	return (strcmp(token->word, op) == 0);
 }
 
-t_node *new_node(t_node_type type)
+t_node	*new_node(t_node_type type)
 {
-    t_node *node;
+	t_node	*node;
 
-    node = malloc(sizeof(*node));
-    if (node == NULL)
-        fatal_error("malloc");
-    memset(node, 0, sizeof(*node));
-
-    node->kind = type;
-    return (node);
+	node = malloc(sizeof(*node));
+	if (node == NULL)
+		fatal_error("malloc");
+	memset(node, 0, sizeof(*node));
+	node->kind = type;
+	return (node);
 }
 
-t_token *token_dup(t_token *token)
+t_token	*token_dup(t_token *token)
 {
-    char *word;
+	char	*word;
 
-    word = strdup(token->word);
-    if(word == NULL)
-        fatal_error("strdup");
-    return new_token(word, token->kind);
+	word = strdup(token->word);
+	if (word == NULL)
+		fatal_error("strdup");
+	return (new_token(word, token->kind));
 }
 
 void	append_token(t_token **token, t_token *elm)
@@ -178,7 +176,6 @@ void	append_token(t_token **token, t_token *elm)
 	}
 	append_token(&(*token)->next, elm);
 }
-
 
 void	append_node(t_node **node, t_node *elm)
 {

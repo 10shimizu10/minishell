@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/25 21:09:57 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/25 21:19:02 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ char	*search_path_mode(const char *filename, int mode)
 	char	path[PATH_MAX];
 	char	*value;
 	char	*end;
-			char *dup;
+	char	*dup;
 
 	value = xgetenv("PATH");
 	while (*value)
