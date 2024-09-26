@@ -6,16 +6,11 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/25 21:18:05 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 01:04:22 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-bool	equal_op(t_token *tok, char *op);
-void	append_node(t_node **node, t_node *elm);
-t_node	*pipeline(t_token **rest, t_token *token);
-t_node	*simple_command(t_token **rest, t_token *token);
 
 t_node	*parse(t_token *token)
 {
@@ -105,8 +100,8 @@ t_node	*redirect_heredoc(t_token **rest, t_token *token)
 
 	node = new_node(ND_REDIR_HEREDOC);
 	node->delimiter = token_dup(token->next);
-	if (strchr(node->delimiter->word, SINGLE_QUOTE_CHAR) == NULL
-		&& strchr(node->delimiter->word, DOUBLE_QUOTE_CHAR) == NULL)
+	if (ft_strchr(node->delimiter->word, SINGLE_QUOTE_CHAR) == NULL
+		&& ft_strchr(node->delimiter->word, DOUBLE_QUOTE_CHAR) == NULL)
 		node->is_delim_unquoted = true;
 	node->targetfd = STDIN_FILENO;
 	*rest = token->next->next;
@@ -142,7 +137,7 @@ bool	equal_op(t_token *token, char *op)
 {
 	if (token->kind != TOKEN_OP)
 		return (false);
-	return (strcmp(token->word, op) == 0);
+	return (ft_strcmp(token->word, op) == 0);
 }
 
 t_node	*new_node(t_node_type type)
@@ -152,7 +147,7 @@ t_node	*new_node(t_node_type type)
 	node = malloc(sizeof(*node));
 	if (node == NULL)
 		fatal_error("malloc");
-	memset(node, 0, sizeof(*node));
+	ft_memset(node, 0, sizeof(*node));
 	node->kind = type;
 	return (node);
 }
@@ -161,7 +156,7 @@ t_token	*token_dup(t_token *token)
 {
 	char	*word;
 
-	word = strdup(token->word);
+	word = ft_strdup(token->word);
 	if (word == NULL)
 		fatal_error("strdup");
 	return (new_token(word, token->kind));

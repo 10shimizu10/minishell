@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/26 09:59:05 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 00:51:43 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 bool	is_numeric(char *s)
 {
-	if (!isdigit(*s))
+	if (!is_digit(*s))
 		return (false);
 	while (*s)
 	{
-		if (!isdigit(*s))
+		if (!is_digit(*s))
 			return (false);
 		s++;
 	}
@@ -42,7 +42,7 @@ int builtin_exit(char **argv, t_shell *shell)
 	if (is_numeric(arg))
 	{
 		errno = 0;
-		res = strtol(arg, &endptr, 10);
+		res = ft_strtol(arg, &endptr, 10);
 		if (errno == 0 && *endptr == '\0')
 			exit((int)res);  // 数値引数が有効な場合、そのステータスで終了
 	}

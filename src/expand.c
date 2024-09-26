@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/26 09:14:11 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 00:53:51 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,12 @@ void	append_char(char **s, char c)
 
 	size = 2;
 	if (*s)
-		size += strlen(*s);
+		size += ft_strlen(*s);
 	new = malloc(size);
 	if (new == NULL)
 		fatal_error("malloc");
 	if (*s)
-		strlcpy(new, *s, size);
+		ft_strlcpy(new, *s, size);
 	new[size - 2] = c;
 	new[size - 1] = '\0';
 	if (*s)
@@ -161,29 +161,44 @@ void	expand_special_parameter_str(char **dst, char **rest, char *p, t_shell *she
 	*rest = p;
 }
 
-void	expand_variable_str(char **dst, char **rest, char *p)
-{
-	char	*name;
-	char	*value;
+#include <stdlib.h>
+#include <stdio.h>
 
-	name = calloc(1, sizeof(char));
-	if (name == NULL)
-		fatal_error("calloc");
-	if (*p != '$')
-		assert_error("Expected dollar sign");
-	p++;
-	if (!is_alpha_under(*p))
-		assert_error("Variable must starts with alphabetic character or underscore.");
-	append_char(&name, *p++);
-	while (is_alpha_num_under(*p))
-		append_char(&name, *p++);
-	value = xgetenv(name);
-	free(name);
-	if (value)
-		while (*value)
-			append_char(dst, *value++);
-	*rest = p;
+void expand_variable_str(char **dst, char **rest, char *p)
+{
+    char *name;
+    char *value;
+
+    // calloc を malloc に変更し、最初に 1 バイトのメモリを確保
+    name = malloc(1 * sizeof(char));
+    if (name == NULL)
+        fatal_error("malloc");
+
+    // 確保したメモリをゼロクリアする
+    name[0] = '\0'; 
+
+    if (*p != '$')
+        assert_error("Expected dollar sign");
+    
+    p++;
+    if (!is_alpha_under(*p))
+        assert_error("Variable must start with an alphabetic character or underscore.");
+    
+    append_char(&name, *p++);
+    
+    while (is_alpha_num_under(*p))
+        append_char(&name, *p++);
+    
+    value = xgetenv(name);
+    free(name);
+    
+    if (value)
+        while (*value)
+            append_char(dst, *value++);
+    
+    *rest = p;
 }
+
 
 void	append_single_quote(char **dst, char **rest, char *p)
 {

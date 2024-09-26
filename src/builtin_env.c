@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/25 21:03:32 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 00:28:19 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ int	builtin_env(char **argv)
 	while (cur)
 	{
 		if (cur->value)
-			printf("%s=%s\n", cur->name, cur->value);
+			ft_printf("%s=%s\n", cur->name, cur->value);
 		cur = cur->next;
 	}
-	printf("_=/usr/bin/env\n");
+	ft_printf("_=/usr/bin/env\n");
 	return (0);
 }

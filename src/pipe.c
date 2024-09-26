@@ -6,13 +6,17 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/25 21:10:24 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 01:06:29 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	cpy_pipe(int dst[2], int src[2]);
+static void	cpy_pipe(int dst[2], int src[2])
+{
+	dst[0] = src[0];
+	dst[1] = src[1];
+}
 
 void	prepare_pipe(t_node *node)
 {
@@ -40,10 +44,4 @@ void	prepare_pipe_parent(t_node *node)
 		close(node->inpipe[0]);
 	if (node->next)
 		close(node->outpipe[1]);
-}
-
-static void	cpy_pipe(int dst[2], int src[2])
-{
-	dst[0] = src[0];
-	dst[1] = src[1];
 }

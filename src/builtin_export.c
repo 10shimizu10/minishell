@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/25 21:05:26 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 00:31:56 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ void	print_allenv(void)
 	while (cur)
 	{
 		if (cur->value)
-			printf("declare -x %s=\"%s\"\n", cur->name, cur->value);
+			ft_printf("declare -x %s=\"%s\"\n", cur->name, cur->value);
 		else
-			printf("declare -x %s\n", cur->name);
+			ft_printf("declare -x %s\n", cur->name);
 		cur = cur->next;
 	}
 }

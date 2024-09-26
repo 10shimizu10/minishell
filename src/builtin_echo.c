@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/25 21:03:25 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 00:23:19 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	builtin_echo(char **argv)
 
 	i = 1;
 	echo_newline = true;
-	if (argv[1] && strncmp(argv[1], "-n", 2) == 0)
+	if (argv[1] && ft_strncmp(argv[1], "-n", 2) == 0)
 	{
 		i++;
 		echo_newline = false;
@@ -31,7 +31,7 @@ int	builtin_echo(char **argv)
 		if (!is_first_arg)
 			write(STDOUT_FILENO, " ", 1);
 		is_first_arg = false;
-		write(STDOUT_FILENO, argv[i], strlen(argv[i]));
+		write(STDOUT_FILENO, argv[i], ft_strlen(argv[i]));
 		i++;
 	}
 	if (echo_newline)

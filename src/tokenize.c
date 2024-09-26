@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/26 09:10:15 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 01:08:45 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ t_token	*new_token(char *word, t_token_type kind)
 	if (token == NULL)
 		fatal_error("malloc");
 	else
-		memset(token, 0, sizeof(*token));
+		ft_memset(token, 0, sizeof(*token));
 	token->word = word;
 	token->kind = kind;
 	return (token);
@@ -46,14 +46,14 @@ bool	consume_blank(char **rest, char *line)
 
 bool	startswith(const char *s, const char *keyword)
 {
-	return (memcmp(s, keyword, strlen(keyword)) == 0);
+	return (ft_memcmp(s, keyword, ft_strlen(keyword)) == 0);
 }
 
 bool	is_metacharacter(char c)
 {
 	if (is_blank(c))
 		return (true);
-	return (c && strchr("|&;()<>\n", c));
+	return (c && ft_strchr("|&;()<>\n", c));
 }
 
 bool	is_word(const char *s)
@@ -73,10 +73,10 @@ t_token	*operator(char **rest, char *line)
 	{
 		if (startswith(line, operators[i]))
 		{
-			op = strdup(operators[i]);
+			op = ft_strdup(operators[i]);
 			if (op == NULL)
 				fatal_error("strdup");
-			*rest = line + strlen(op);
+			*rest = line + ft_strlen(op);
 			return (new_token(op, TOKEN_OP));
 		}
 		i++;
@@ -120,7 +120,7 @@ t_token	*word(char **rest, char *line)
 		else
 			line++;
 	}
-	word = strndup(start, line - start);
+	word = ft_strndup(start, line - start);
 	if (word == NULL)
 		fatal_error("strndup");
 	*rest = line;
@@ -163,11 +163,11 @@ char	**tail_recursive(t_token *token, int nargs, char **argv)
 		fatal_error("malloc");
 	}
 	// 元のメモリ内容を新しい領域にコピー
-	memcpy(new_argv, argv, nargs * sizeof(char *));
+	ft_memcpy(new_argv, argv, nargs * sizeof(char *));
 	free(argv); // 古いメモリを解放
 	argv = new_argv;
 	// 次のトークンを追加
-	argv[nargs] = strdup(token->word);
+	argv[nargs] = ft_strdup(token->word);
 	if (argv[nargs] == NULL)
 		fatal_error("strdup");
 	argv[nargs + 1] = NULL;
@@ -181,6 +181,6 @@ char	**token_list_to_argv(t_token *token)
 	argv = malloc(sizeof(char *)); // 1つのポインタ分のメモリを確保
 	if (argv == NULL)
 		fatal_error("malloc");
-	memset(argv, 0, sizeof(char *)); // メモリをゼロ初期化
+	ft_memset(argv, 0, sizeof(char *)); // メモリをゼロ初期化
 	return (tail_recursive(token, 0, argv));
 }

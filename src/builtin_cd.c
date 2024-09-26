@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/25 21:03:14 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 00:19:50 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ bool	consume_path(char **rest, char *path, char *elm)
 {
 	size_t	elm_len;
 
-	elm_len = strlen(elm);
-	if (strncmp(path, elm, elm_len) == 0)
+	elm_len = ft_strlen(elm);
+	if (ft_strncmp(path, elm, elm_len) == 0)
 	{
 		if (path[elm_len] == '\0' || path[elm_len] == '/')
 		{
@@ -53,9 +53,9 @@ void	append_path_elm(char *dst, char **rest, char *src)
 	while (src[elm_len] && src[elm_len] != '/')
 		elm_len++;
 	// TODO: strcat, strncat is unsafe
-	if (dst[strlen(dst) - 1] != '/')
-		strcat(dst, "/");
-	strncat(dst, src, elm_len);
+	if (dst[ft_strlen(dst) - 1] != '/')
+		ft_strcat(dst, "/");
+	ft_strncat(dst, src, elm_len);
 	*rest = src + elm_len;
 }
 
@@ -65,9 +65,9 @@ char	*resolve_pwd(char *oldpwd, char *path)
 	char	*dup;
 
 	if (*path == '/' || oldpwd == NULL)
-		strlcpy(newpwd, "/", PATH_MAX);
+		ft_strlcpy(newpwd, "/", PATH_MAX);
 	else
-		strlcpy(newpwd, oldpwd, PATH_MAX);
+		ft_strlcpy(newpwd, oldpwd, PATH_MAX);
 	while (*path)
 	{
 		if (*path == '/')
@@ -79,7 +79,7 @@ char	*resolve_pwd(char *oldpwd, char *path)
 		else
 			append_path_elm(newpwd, &path, path);
 	}
-	dup = strdup(newpwd);
+	dup = ft_strdup(newpwd);
 	if (dup == NULL)
 		fatal_error("strdup");
 	return (dup);
@@ -102,10 +102,10 @@ int	builtin_cd(char **argv)
 			builtin_error("cd", NULL, "HOME not set");
 			return (1);
 		}
-		strlcpy(path, home, PATH_MAX);
+		ft_strlcpy(path, home, PATH_MAX);
 	}
 	else
-		strlcpy(path, argv[1], PATH_MAX);
+		ft_strlcpy(path, argv[1], PATH_MAX);
 	if (chdir(path) < 0)
 	{
 		builtin_error("cd", NULL, "chdir");

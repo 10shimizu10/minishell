@@ -1,28 +1,16 @@
-// #include <fcntl.h>
-// #include <unistd.h>
-// #include "minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redirect.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
+/*   Updated: 2024/09/27 01:18:02 by a.               ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-// int	stashfd(int fd)
-// {
-// 	int	stashfd;
-
-// 	stashfd = fcntl(fd, F_DUPFD, 10);
-// 	if (stashfd < 0)
-// 		fatal_error("fcntl");
-// 	if (close(fd) < 0)
-// 		fatal_error("close");
-// 	return (stashfd);
-// }
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <readline/readline.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include <errno.h>
 #include "minishell.h"
-#include <string.h>
 
 bool	readline_interrupted = false;
 
@@ -73,7 +61,7 @@ int	read_heredoc(const char *delimiter, bool is_delim_unquoted, t_shell *shell)
 			free(line);
 			break ;
 		}
-		if (strcmp(line, delimiter) == 0)
+		if (ft_strcmp(line, delimiter) == 0)
 		{
 			free(line);
 			break ;

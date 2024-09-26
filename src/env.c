@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/25 21:19:14 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 00:38:39 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,26 +31,38 @@ void	initenv(void)
 
 char	**get_environ(t_map *map)
 {
-	size_t	i;
-	size_t	size;
-	t_item	*item;
-	char	**environ;
+    size_t	i;
+    size_t	size;
+    t_item	*item;
+    char	**environ;
 
-	size = map_len(map, false) + 1;
-	environ = calloc(size, sizeof(char *));
-	i = 0;
-	item = map->item_head.next;
-	while (item)
-	{
-		if (item->value)
-		{
-			environ[i] = item_get_string(item);
-			i++;
-		}
-		item = item->next;
-	}
-	environ[i] = NULL;
-	return (environ);
+    size = map_len(map, false) + 1;
+    environ = malloc(size * sizeof(char *));  // mallocを使用してメモリ確保
+    if (!environ) {
+        return NULL; // メモリ確保失敗時はNULLを返す
+    }
+
+    // 確保したメモリをゼロクリア (while を使う)
+    i = 0;
+    while (i < size)
+    {
+        environ[i] = NULL;
+        i++;
+    }
+
+    i = 0;
+    item = map->item_head.next;
+    while (item)
+    {
+        if (item->value)
+        {
+            environ[i] = item_get_string(item);
+            i++;
+        }
+        item = item->next;
+    }
+    environ[i] = NULL;
+    return (environ);
 }
 
 static void	envmap_init(t_map *map, char **ep)

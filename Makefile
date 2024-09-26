@@ -24,6 +24,7 @@ SRCS     = src/main.c\
 		   src/builtin_pwd.c\
 		   src/map.c\
 		   src/env.c\
+		   src/ft_utils.c\
 
 OBJS     = $(SRCS:%.c=%.o)
 

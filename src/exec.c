@@ -6,17 +6,11 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/26 10:04:01 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 00:50:25 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-char	*search_path(const char *filename);
-void	validate_access(const char *path, const char *filename);
-pid_t	exec_pipeline(t_node *node, t_shell *shell);
-int		wait_pipeline(pid_t last_pid);
-int	exec(t_node *node, t_shell *shell);
 
 int exec(t_node *node, t_shell *shell)
 {
@@ -58,7 +52,7 @@ char	*search_path_mode(const char *filename, int mode)
 		strlcat(path, filename, PATH_MAX);
 		if (access(path, mode) == 0)
 		{
-			dup = strdup(path);
+			dup = ft_strdup(path);
 			if (dup == NULL)
 				fatal_error("strdup");
 			return (dup);
@@ -87,9 +81,9 @@ void	validate_access(const char *path, const char *filename)
 
 	if (path == NULL)
 		err_exit(filename, "command not found", 127);
-	if (strcmp(filename, "") == 0)
+	if (ft_strcmp(filename, "") == 0)
 		err_exit(filename, "command not found", 127);
-	if (strcmp(filename, "..") == 0)
+	if (ft_strcmp(filename, "..") == 0)
 		err_exit(filename, "command not found", 127);
 	if (access(path, F_OK) < 0)
 		err_exit(filename, "command not found", 127);
@@ -110,7 +104,7 @@ int	exec_nonbuiltin(t_node *node)
 	do_redirect(node->command->redirects);
 	argv = token_list_to_argv(node->command->args);
 	path = argv[0];
-	if (strchr(path, '/') == NULL)
+	if (ft_strchr(path, '/') == NULL)
 		path = search_path(path);
 	validate_access(path, argv[0]);
 	execve(path, argv, get_environ(envmap));
