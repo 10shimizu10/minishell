@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/25 21:19:02 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/26 10:04:01 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,27 @@
 
 char	*search_path(const char *filename);
 void	validate_access(const char *path, const char *filename);
-pid_t	exec_pipeline(t_node *node);
+pid_t	exec_pipeline(t_node *node, t_shell *shell);
 int		wait_pipeline(pid_t last_pid);
-int		exec(t_node *node);
+int	exec(t_node *node, t_shell *shell);
 
-int	exec(t_node *node)
+int exec(t_node *node, t_shell *shell)
 {
 	pid_t	last_pid;
 	int		status;
 
-	if (open_redir_file(node) < 0)
-		return (ERROR_OPEN_REDIR);
+	if (open_redir_file(node, shell) < 0)
+		return (ERROR_OPEN_REDIR);  // リダイレクトエラー時の処理
 	if (node->next == NULL && is_builtin(node))
-		status = exec_builtin(node);
+		status = exec_builtin(node, shell);  // shell構造体を渡す
 	else
 	{
-		last_pid = exec_pipeline(node);
-		status = wait_pipeline(last_pid);
+		last_pid = exec_pipeline(node, shell);  // パイプラインを実行
+		status = wait_pipeline(last_pid);  // パイプラインの終了待機
 	}
+	shell->last_status = status;  // 最後のステータスをシェル構造体に保存
 	return (status);
 }
-
 char	*search_path_mode(const char *filename, int mode)
 {
 	char	path[PATH_MAX];
@@ -119,7 +119,7 @@ int	exec_nonbuiltin(t_node *node)
 	fatal_error("execve");
 }
 
-pid_t	exec_pipeline(t_node *node)
+pid_t	exec_pipeline(t_node *node, t_shell *shell)
 {
 	pid_t	pid;
 
@@ -135,14 +135,14 @@ pid_t	exec_pipeline(t_node *node)
 		reset_signal();
 		prepare_pipe_child(node);
 		if (is_builtin(node))
-			exit(exec_builtin(node));
+			exit(exec_builtin(node, shell));
 		else
 			exec_nonbuiltin(node);
 	}
 	// parent process
 	prepare_pipe_parent(node);
 	if (node->next)
-		return (exec_pipeline(node->next));
+		return (exec_pipeline(node->next, shell));
 	return (pid);
 }
 

@@ -6,21 +6,21 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/25 21:04:46 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/26 09:59:23 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	exec_builtin(t_node *node)
+int exec_builtin(t_node *node, t_shell *shell)
 {
 	int		status;
 	char	**argv;
 
-	do_redirect(node->command->redirects);
+	do_redirect(node->command->redirects);  // リダイレクトの処理
 	argv = token_list_to_argv(node->command->args);
 	if (strcmp(argv[0], "exit") == 0)
-		status = builtin_exit(argv);
+		status = builtin_exit(argv, shell);  // shell構造体を渡す
 	else if (strcmp(argv[0], "export") == 0)
 		status = builtin_export(argv);
 	else if (strcmp(argv[0], "unset") == 0)
@@ -34,9 +34,10 @@ int	exec_builtin(t_node *node)
 	else if (strcmp(argv[0], "pwd") == 0)
 		status = builtin_pwd(argv);
 	else
-		todo("exec_builtin");
-	free_argv(argv);
-	reset_redirect(node->command->redirects);
+		todo("exec_builtin");  // 実装されていないビルトイン処理
+
+	free_argv(argv);  // argvのメモリ解放
+	reset_redirect(node->command->redirects);  // リダイレクトのリセット
 	return (status);
 }
 

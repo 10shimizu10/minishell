@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/25 21:10:41 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/26 09:10:15 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,12 +127,12 @@ t_token	*word(char **rest, char *line)
 	return (new_token(word, TOKEN_WORD));
 }
 
-t_token	*tokenize(char *line)
+t_token	*tokenize(char *line, t_shell *shell)
 {
 	t_token	head;
 	t_token	*token;
 
-	syntax_error = false;
+	shell->syntax_error = false; // 構造体内の syntax_error を使用
 	head.next = NULL;
 	token = &head;
 	while (*line)
@@ -144,12 +144,11 @@ t_token	*tokenize(char *line)
 		else if (is_word(line))
 			token = token->next = word(&line, line);
 		else
-			tokenize_error("Unexpected Token", &line, line);
+			tokenize_error("Unexpected Token", &line, line); // ここでエラーが起きたとき、構造体の値を設定
 	}
 	token->next = new_token(NULL, TOKEN_EOF);
 	return (head.next);
 }
-
 char	**tail_recursive(t_token *token, int nargs, char **argv)
 {
 	char	**new_argv;

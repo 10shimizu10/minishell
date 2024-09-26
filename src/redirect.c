@@ -55,7 +55,7 @@ int	stashfd(int fd)
 	return (stashfd);
 }
 
-int	read_heredoc(const char *delimiter, bool is_delim_unquoted)
+int	read_heredoc(const char *delimiter, bool is_delim_unquoted, t_shell *shell)
 {
 	char	*line;
 	int		pfd[2];
@@ -79,7 +79,7 @@ int	read_heredoc(const char *delimiter, bool is_delim_unquoted)
 			break ;
 		}
 		if (is_delim_unquoted)
-			line = expand_heredoc_line(line);
+			line = expand_heredoc_line(line, shell);
 		write(pfd[1], line, strlen(line));
 		write(pfd[1], "\n", 1);
 		free(line);
@@ -93,20 +93,20 @@ int	read_heredoc(const char *delimiter, bool is_delim_unquoted)
 	return (pfd[0]);
 }
 
-int	open_redir_file(t_node *node)
+int	open_redir_file(t_node *node, t_shell *shell)
 {
 	if (node == NULL)
 		return (0);
 	if (node->kind == ND_PIPELINE)
 	{
-		if (open_redir_file(node->command) < 0)
+		if (open_redir_file(node->command, shell) < 0)
 			return (-1);
-		if (open_redir_file(node->next) < 0)
+		if (open_redir_file(node->next, shell) < 0)
 			return (-1);
 		return (0);
 	}
 	else if (node->kind == ND_SIMPLE_CMD)
-		return (open_redir_file(node->redirects));
+		return (open_redir_file(node->redirects, shell));
 	else if (node->kind == ND_REDIR_OUT)
 		node->filefd = open(node->filename->word, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	else if (node->kind == ND_REDIR_IN)
@@ -114,7 +114,7 @@ int	open_redir_file(t_node *node)
 	else if (node->kind == ND_REDIR_APPEND)
 		node->filefd = open(node->filename->word, O_CREAT | O_WRONLY | O_APPEND, 0644);
 	else if (node->kind == ND_REDIR_HEREDOC)
-				node->filefd = read_heredoc(node->delimiter->word, node->is_delim_unquoted);
+				node->filefd = read_heredoc(node->delimiter->word, node->is_delim_unquoted, shell);
     else
 		assert_error("oopen_redir_file");
 	if (node->filefd < 0)
@@ -124,7 +124,7 @@ int	open_redir_file(t_node *node)
 		return (-1);
 	}
 	node->filefd = stashfd(node->filefd);
-	return (open_redir_file(node->next));
+	return (open_redir_file(node->next, shell));
 }
 
 bool is_redirect(t_node *node)

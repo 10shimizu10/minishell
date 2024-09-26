@@ -2,40 +2,17 @@
 # define MINISHELL_H
 
 # include "minishell.h"
+# include <ctype.h>
+# include <errno.h>
 # include <limits.h>
 # include <signal.h>
 # include <stdbool.h>
 # include <stddef.h>
+# include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
+# include <sys/stat.h>
 # include <unistd.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <errno.h>
-#include "minishell.h"
-#include <unistd.h>
-#include <limits.h>
-#include <sys/stat.h>
-#include "minishell.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <limits.h>
-#include "minishell.h"
-#include <limits.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
-#include <sys/stat.h>
-#include "minishell.h"
-
-#include <string.h>
-
-#include <ctype.h>
-
-
-#include <string.h>
 
 # define ERROR_TOKENIZE 258
 # define ERROR_PARSE 258;
@@ -43,10 +20,12 @@
 # define SINGLE_QUOTE_CHAR '\''
 # define DOUBLE_QUOTE_CHAR '"'
 
-extern int						last_status;
-extern bool						syntax_error;
-extern bool						readline_interrupted;
-extern volatile sig_atomic_t	sig;
+typedef struct s_shell
+{
+	int						last_status;
+	bool					syntax_error;
+	bool					readline_interrupted;
+}							t_shell;
 
 typedef enum e_token_type
 {
@@ -125,7 +104,7 @@ void							builtin_error(const char *func,
 									const char *name, const char *err);
 
 // tokenize.c
-t_token							*tokenize(char *line);
+t_token	*tokenize(char *line, t_shell *shell);
 char							**token_list_to_argv(t_token *token);
 t_token							*new_token(char *word, t_token_type kind);
 bool							is_blank(char c);
@@ -138,8 +117,8 @@ t_token							*operator(char **rest, char *line);
 t_token							*word(char **rest, char *line);
 
 // expand.c
-void							expand(t_node *node);
-char							*expand_heredoc_line(char *line);
+void	expand(t_node *node, t_shell *shell);
+char	*expand_heredoc_line(char *line, t_shell *shell);
 
 // destructor.c
 void							free_node(t_node *node);
@@ -156,7 +135,8 @@ void							append_token(t_token **tokens, t_token *token);
 t_token							*token_dup(t_token *token);
 
 // redirect.c
-int								open_redir_file(t_node *node);
+
+int	open_redir_file(t_node *node, t_shell *shell);
 void							do_redirect(t_node *redirects);
 void							reset_redirect(t_node *redirects);
 
@@ -166,7 +146,7 @@ void							prepare_pipe_child(t_node *node);
 void							prepare_pipe_parent(t_node *node);
 
 // exec.c
-int								exec(t_node *node);
+int	exec(t_node *node, t_shell *shell);
 
 // signal.h
 
@@ -175,11 +155,11 @@ void							reset_signal(void);
 
 // builtin.c
 bool							is_builtin(t_node *node);
-int								exec_builtin(t_node *node);
+int								exec_builtin(t_node *node, t_shell *shell);
 
 // builtin_exit.c
 bool							is_numeric(char *s);
-int								builtin_exit(char **argv);
+int								builtin_exit(char **argv, t_shell *shell);
 
 // builtin_export.c
 int								builtin_export(char **argv);

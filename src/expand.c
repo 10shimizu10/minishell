@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/25 21:18:59 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/26 09:14:11 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,12 +152,12 @@ void	append_num(char **dst, unsigned int num)
 	append_char(dst, '0' + (num % 10));
 }
 
-void	expand_special_parameter_str(char **dst, char **rest, char *p)
+void	expand_special_parameter_str(char **dst, char **rest, char *p, t_shell *shell)
 {
 	if (!is_special_parameter(p))
 		assert_error("Expected special parameter");
 	p += 2;
-	append_num(dst, last_status);
+	append_num(dst, shell->last_status); // グローバル変数から構造体に変更
 	*rest = p;
 }
 
@@ -205,7 +205,7 @@ void	append_single_quote(char **dst, char **rest, char *p)
 		assert_error("Expected single quote");
 }
 
-void	append_double_quote(char **dst, char **rest, char *p)
+void	append_double_quote(char **dst, char **rest, char *p, t_shell *shell)
 {
 	if (*p == DOUBLE_QUOTE_CHAR)
 	{
@@ -218,7 +218,7 @@ void	append_double_quote(char **dst, char **rest, char *p)
 			else if (is_variable(p))
 				expand_variable_str(dst, &p, p);
 			else if (is_special_parameter(p))
-				expand_special_parameter_str(dst, &p, p);
+				expand_special_parameter_str(dst, &p, p, shell);
 			else
 				append_char(dst, *p++);
 		}
@@ -230,7 +230,7 @@ void	append_double_quote(char **dst, char **rest, char *p)
 		assert_error("Expected double quote");
 }
 
-void	expand_variable_token(t_token *token)
+void	expand_variable_token(t_token *token, t_shell *shell)
 {
 	char	*new_word;
 	char	*p;
@@ -242,45 +242,43 @@ void	expand_variable_token(t_token *token)
 	if (new_word == NULL)
 		fatal_error("malloc");
 	memset(new_word, 0, 1 * sizeof(char));
-	if (new_word == NULL)
-		fatal_error("calloc");
 	while (*p && !is_metacharacter(*p))
 	{
 		if (*p == SINGLE_QUOTE_CHAR)
 			append_single_quote(&new_word, &p, p);
 		else if (*p == DOUBLE_QUOTE_CHAR)
-			append_double_quote(&new_word, &p, p);
+			append_double_quote(&new_word, &p, p, shell); // 構造体を渡す
 		else if (is_variable(p))
 			expand_variable_str(&new_word, &p, p);
 		else if (is_special_parameter(p))
-			expand_special_parameter_str(&new_word, &p, p);
+			expand_special_parameter_str(&new_word, &p, p, shell); // 構造体を渡す
 		else
 			append_char(&new_word, *p++);
 	}
 	free(token->word);
 	token->word = new_word;
-	expand_variable_token(token->next);
+	expand_variable_token(token->next, shell); // 構造体を渡す
 }
 
-void	expand_variable(t_node *node)
+void	expand_variable(t_node *node, t_shell *shell)
 {
 	if (node == NULL)
 		return ;
-	expand_variable_token(node->args);
-	expand_variable_token(node->filename);
+	expand_variable_token(node->args, shell);
+	expand_variable_token(node->filename, shell);
 	// do not expand heredoc delimiter
-	expand_variable(node->redirects);
-	expand_variable(node->command);
-	expand_variable(node->next);
+	expand_variable(node->redirects, shell);
+	expand_variable(node->command, shell);
+	expand_variable(node->next, shell);
 }
 
-void	expand(t_node *node)
+void	expand(t_node *node, t_shell *shell)
 {
-	expand_variable(node);
+	expand_variable(node, shell); // 構造体を渡す
 	expand_quote_removal(node);
 }
 
-char	*expand_heredoc_line(char *line)
+char	*expand_heredoc_line(char *line, t_shell *shell)
 {
 	char *new_word;
 	char *p;
@@ -297,7 +295,7 @@ char	*expand_heredoc_line(char *line)
 		if (is_variable(p))
 			expand_variable_str(&new_word, &p, p);
 		else if (is_special_parameter(p))
-			expand_special_parameter_str(&new_word, &p, p);
+			expand_special_parameter_str(&new_word, &p, p, shell); // 構造体を渡す
 		else
 			append_char(&new_word, *p++);
 	}

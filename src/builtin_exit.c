@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/25 21:03:38 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/26 09:59:05 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ bool	is_numeric(char *s)
 	return (true);
 }
 
-int	builtin_exit(char **argv)
+int builtin_exit(char **argv, t_shell *shell)
 {
 	long res;
 	char *arg;
 	char *endptr;
 
 	if (argv[1] == NULL)
-		exit(last_status);
+		exit(shell->last_status);  // シェルの終了ステータスで終了
 	if (argv[2])
 	{
 		xperror("exit: too many arguments");
@@ -44,8 +44,8 @@ int	builtin_exit(char **argv)
 		errno = 0;
 		res = strtol(arg, &endptr, 10);
 		if (errno == 0 && *endptr == '\0')
-			exit((int)res);
+			exit((int)res);  // 数値引数が有効な場合、そのステータスで終了
 	}
 	xperror("exit: numeric argument required");
-	exit(255);
+	exit(255);  // 数字以外の引数が渡された場合は255で終了
 }

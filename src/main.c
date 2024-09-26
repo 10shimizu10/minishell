@@ -6,61 +6,65 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/25 21:18:54 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/26 10:06:28 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <readline/history.h>
 #include <readline/readline.h>
+#include <readline/history.h>
 
-int		last_status;
+int	last_status;
 
-void	interpret(char *line, int *stat_loc)
+void interpret(char *line, t_shell *shell)
 {
-	t_token	*token;
-	t_node	*node;
+    t_token *token;
+    t_node *node;
 
-	token = tokenize(line);
+    token = tokenize(line, shell);
 	if (at_eof(token))
-		;
-	else if (syntax_error)
-		*stat_loc = ERROR_TOKENIZE;
-	else
-	{
-		node = parse(token);
-		if (syntax_error)
-			*stat_loc = ERROR_PARSE;
-		if (!syntax_error)
+        ;
+    else if(shell->syntax_error)
+        shell->last_status = ERROR_TOKENIZE;
+    else
+    {
+        node = parse(token);
+		if (shell->syntax_error)
+			shell->last_status = ERROR_PARSE;
+		if (!shell->syntax_error)
 		{
-			expand(node);
-			*stat_loc = exec(node);
+			expand(node, shell);
+			shell->last_status = exec(node, shell);
 		}
-		free_node(node);
-	}
-	free_token(token);
+        free_node(node);
+    }
+    free_token(token);
 }
 
-int	main(void)
+int main()
 {
-	char *line;
+    char* line;
+    t_shell shell;
 
-	rl_outstream = stderr;
+    shell.last_status = 0;
+    shell.syntax_error = false;
+    shell.readline_interrupted = false;
+
+    rl_outstream = stderr;
 	initenv();
 	setup_signal();
-	last_status = 0;
 
-	while (1)
-	{
-		line = readline("minishell$ ");
-		if (line == NULL)
-			break ;
+    while(1)
+    {
+        line = readline("minishell$ ");
+        if(line == NULL)
+            break ;
 
-		if (*line)
-			add_history(line);
-		interpret(line, &last_status);
-		free(line);
-	}
-	// write_history("history.txt");
-	exit(last_status);
+        if(*line)
+            add_history(line);
+        interpret(line, &shell);
+        free(line);
+    }
+    //write_history("history.txt");
+    exit(shell.last_status);
 }
