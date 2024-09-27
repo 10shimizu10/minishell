@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 13:09:01 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 14:12:30 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ bool	equal_inode(const char *path1, const char *path2)
 
 int	builtin_pwd(char **argv, t_shell *shell)
 {
-	char *pwd;
-	char cwd[PATH_MAX];
+	char	*pwd;
+	char	cwd[PATH_MAX];
 
 	(void)argv;
 	pwd = xgetenv("PWD", shell);

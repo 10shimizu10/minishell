@@ -1,51 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   destructor.c                                       :+:      :+:    :+:   */
+/*   builtin_echo.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 13:58:49 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 14:12:46 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_node(t_node *node)
+int	builtin_echo(char **argv)
 {
-	if (node == NULL)
-		return ;
-	free_token(node->args);
-	free_token(node->filename);
-	free_token(node->delimiter);
-	free_node(node->redirects);
-	free_node(node->next);
-	free_node(node->command);
-	free(node);
-}
+	bool	is_first_arg;
+	bool	echo_newline;
+	size_t	i;
 
-void	free_token(t_token *token)
-{
-	if (token == NULL)
-		return ;
-	if (token->word)
-		free(token->word);
-	free_token(token->next);
-	free(token);
-}
-
-void	free_argv(char **argv)
-{
-	int	i;
-
-	if (argv == NULL)
-		return ;
-	i = 0;
+	i = 1;
+	echo_newline = true;
+	if (argv[1] && ft_strncmp(argv[1], "-n", 2) == 0)
+	{
+		i++;
+		echo_newline = false;
+	}
+	is_first_arg = true;
 	while (argv[i])
 	{
-		free(argv[i]);
+		if (!is_first_arg)
+			write(STDOUT_FILENO, " ", 1);
+		is_first_arg = false;
+		write(STDOUT_FILENO, argv[i], ft_strlen(argv[i]));
 		i++;
 	}
-	free(argv);
+	if (echo_newline)
+		write(STDOUT_FILENO, "\n", 1);
+	return (0);
 }

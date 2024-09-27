@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 13:04:26 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 17:14:58 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,34 +85,3 @@ char	*resolve_pwd(char *oldpwd, char *path)
 	return (dup);
 }
 
-int	builtin_cd(char **argv, t_shell *shell)
-{
-	char *home;
-	char *oldpwd;
-	char path[PATH_MAX];
-	char *newpwd;
-
-	oldpwd = map_get(shell->envmap, "PWD");
-	map_set(shell->envmap, "OLDPWD", oldpwd);
-	if (argv[1] == NULL)
-	{
-		home = map_get(shell->envmap, "HOME");
-		if (home == NULL)
-		{
-			builtin_error("cd", NULL, "HOME not set");
-			return (1);
-		}
-		ft_strlcpy(path, home, PATH_MAX);
-	}
-	else
-		ft_strlcpy(path, argv[1], PATH_MAX);
-	if (chdir(path) < 0)
-	{
-		builtin_error("cd", NULL, "chdir");
-		return (1);
-	}
-	newpwd = resolve_pwd(oldpwd, path);
-	map_set(shell->envmap, "PWD", newpwd);
-	free(newpwd);
-	return (0);
-}

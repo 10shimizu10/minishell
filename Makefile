@@ -5,7 +5,8 @@ INCLUDES = -I include -I$(RLDIR)/include
 CFLAGS   = -Wall -Wextra -Werror $(INCLUDES)
 LIBS     = -lreadline -L$(RLDIR)/lib
 SRCS     = src/main.c\
-           src/error.c\
+		   src/error/error0.c\
+           src/error/error1.c\
            src/tokenize.c\
            src/destructor.c\
 		   src/expand.c\
@@ -14,17 +15,23 @@ SRCS     = src/main.c\
 		   src/pipe.c\
 		   src/exec.c\
 		   src/signal.c\
-		   src/builtin.c\
-		   src/builtin_exit.c\
-		   src/builtin_export.c\
-		   src/builtin_unset.c\
-		   src/builtin_env.c\
-		   src/builtin_cd.c\
-		   src/builtin_echo.c\
-		   src/builtin_pwd.c\
+		   src/builtin/builtin.c\
+		   src/builtin/builtin_exit.c\
+		   src/builtin/builtin_export.c\
+		   src/builtin/builtin_unset.c\
+		   src/builtin/builtin_env.c\
+		   src/builtin/builtin_cd0.c\
+		   src/builtin/builtin_cd1.c\
+		   src/builtin/builtin_echo.c\
+		   src/builtin/builtin_pwd.c\
 		   src/map.c\
 		   src/env.c\
-		   src/ft_utils.c\
+		   src/ft_utils/ft_utils0.c\
+		   src/ft_utils/ft_utils1.c\
+		   src/ft_utils/ft_utils2.c\
+		   src/ft_utils/ft_utils3.c\
+		   src/ft_utils/ft_utils4.c\
+		   src/ft_utils/ft_utils5.c\
 
 OBJS     = $(SRCS:%.c=%.o)
 

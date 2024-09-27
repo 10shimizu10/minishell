@@ -7,8 +7,8 @@
 # include <fcntl.h>
 # include <limits.h>
 # include <stdio.h>
-# include <readline/readline.h>
 # include <readline/history.h>
+# include <readline/readline.h>
 # include <signal.h>
 # include <stdarg.h>
 # include <stdbool.h>
@@ -96,6 +96,7 @@ typedef struct s_node
 }						t_node;
 
 // error.c
+void					perror_prefix(void);
 void					todo(const char *msg) __attribute__((noreturn));
 void					fatal_error(const char *msg) __attribute__((noreturn));
 void					assert_error(const char *msg) __attribute__((noreturn));
@@ -181,6 +182,7 @@ int						builtin_unset(char **argv, t_shell *shell);
 int						builtin_env(char **argv, t_shell *shell);
 
 // builtin_cd.c
+char	*resolve_pwd(char *oldpwd, char *path);
 int						builtin_cd(char **argv, t_shell *shell);
 
 // builtin_echo.c
@@ -227,6 +229,7 @@ bool					is_digit(char c);
 bool					is_identifier(const char *s);
 bool					is_alpha_under(char c);
 bool					is_alpha_num_under(char c);
+char					*ft_strncpy(char *dst, const char *src, size_t len);
 
 bool					equal_op(t_token *tok, char *op);
 void					append_node(t_node **node, t_node *elm);

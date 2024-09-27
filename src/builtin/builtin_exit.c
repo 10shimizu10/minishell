@@ -1,29 +1,51 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin_env.c                                      :+:      :+:    :+:   */
+/*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 13:04:48 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 17:21:29 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	builtin_env(char **argv, t_shell *shell)
+bool	is_numeric(char *s)
 {
-	t_item	*cur;
-
-	(void)argv;
-	cur = shell->envmap->item_head.next;
-	while (cur)
+	if (!is_digit(*s))
+		return (false);
+	while (*s)
 	{
-		if (cur->value)
-			ft_printf("%s=%s\n", cur->name, cur->value);
-		cur = cur->next;
+		if (!is_digit(*s))
+			return (false);
+		s++;
 	}
-	ft_printf("_=/usr/bin/env\n");
-	return (0);
+	return (true);
+}
+
+int	builtin_exit(char **argv, t_shell *shell)
+{
+	long	res;
+	char	*arg;
+	char	*endptr;
+
+	if (argv[1] == NULL)
+		exit(shell->last_status);
+	if (argv[2])
+	{
+		xperror("exit: too many arguments");
+		return (1);
+	}
+	arg = argv[1];
+	if (is_numeric(arg))
+	{
+		errno = 0;
+		res = ft_strtol(arg, &endptr, 10);
+		if (errno == 0 && *endptr == '\0')
+			exit((int)res);
+	}
+	xperror("exit: numeric argument required");
+	exit(255);
 }
