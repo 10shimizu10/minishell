@@ -7,13 +7,13 @@ LIBS     = -lreadline -L$(RLDIR)/lib
 SRCS     = src/main.c\
 		   src/error/error0.c\
            src/error/error1.c\
-           src/tokenize.c\
+           src/tokenize/tokenize.c\
            src/destructor.c\
-		   src/expand.c\
-		   src/parse.c\
-		   src/redirect.c\
+		   src/expand/expand.c\
+		   src/parse/parse.c\
+		   src/redirect/redirect.c\
 		   src/pipe.c\
-		   src/exec.c\
+		   src/exec/exec.c\
 		   src/signal.c\
 		   src/builtin/builtin.c\
 		   src/builtin/builtin_exit.c\
@@ -24,7 +24,7 @@ SRCS     = src/main.c\
 		   src/builtin/builtin_cd1.c\
 		   src/builtin/builtin_echo.c\
 		   src/builtin/builtin_pwd.c\
-		   src/map.c\
+		   src/map/map.c\
 		   src/env.c\
 		   src/ft_utils/ft_utils0.c\
 		   src/ft_utils/ft_utils1.c\

@@ -161,8 +161,8 @@ int						wait_pipeline(pid_t last_pid);
 
 // signal.h
 
+void	reset_sig(int signum);
 void					setup_signal(void);
-void					reset_signal(void);
 
 // builtin.c
 bool					is_builtin(t_node *node);

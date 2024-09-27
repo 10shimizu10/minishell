@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 13:26:52 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 17:47:31 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,13 @@ int	exec_nonbuiltin(t_node *node, t_shell *shell)
 	reset_redirect(node->command->redirects);
 	fatal_error("execve");
 }
+
+void	reset_signal(void)
+{
+	reset_sig(SIGQUIT);  // SIGQUITをデフォルト動作に戻す
+	reset_sig(SIGINT);   // SIGINTをデフォルト動作に戻す
+}
+
 
 pid_t	exec_pipeline(t_node *node, t_shell *shell)
 {
