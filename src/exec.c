@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 00:50:25 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 13:17:35 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,14 @@ int exec(t_node *node, t_shell *shell)
 	shell->last_status = status;  // 最後のステータスをシェル構造体に保存
 	return (status);
 }
-char	*search_path_mode(const char *filename, int mode)
+char	*search_path_mode(const char *filename, int mode, t_shell *shell)
 {
 	char	path[PATH_MAX];
 	char	*value;
 	char	*end;
 	char	*dup;
 
-	value = xgetenv("PATH");
+	value = xgetenv("PATH", shell);
 	while (*value)
 	{
 		// /bin:/usr/bin
@@ -64,14 +64,14 @@ char	*search_path_mode(const char *filename, int mode)
 	return (NULL);
 }
 
-char	*search_path(const char *filename)
+char	*search_path(const char *filename, t_shell *shell)
 {
 	char	*path;
 
-	path = search_path_mode(filename, X_OK);
+	path = search_path_mode(filename, X_OK, shell);
 	if (path)
 		return (path);
-	path = search_path_mode(filename, F_OK);
+	path = search_path_mode(filename, F_OK, shell);
 	return (path);
 }
 
@@ -95,8 +95,8 @@ void	validate_access(const char *path, const char *filename)
 		err_exit(path, "Permission denied", 126);
 }
 
-int		exec_nonbuiltin(t_node *node) __attribute__((noreturn));
-int	exec_nonbuiltin(t_node *node)
+int		exec_nonbuiltin(t_node *node, t_shell *shell) __attribute__((noreturn));
+int	exec_nonbuiltin(t_node *node, t_shell *shell)
 {
 	char	*path;
 	char	**argv;
@@ -105,9 +105,9 @@ int	exec_nonbuiltin(t_node *node)
 	argv = token_list_to_argv(node->command->args);
 	path = argv[0];
 	if (ft_strchr(path, '/') == NULL)
-		path = search_path(path);
+		path = search_path(path, shell);
 	validate_access(path, argv[0]);
-	execve(path, argv, get_environ(envmap));
+	execve(path, argv, get_environ(shell->envmap));
 	free_argv(argv);
 	reset_redirect(node->command->redirects);
 	fatal_error("execve");
@@ -131,7 +131,7 @@ pid_t	exec_pipeline(t_node *node, t_shell *shell)
 		if (is_builtin(node))
 			exit(exec_builtin(node, shell));
 		else
-			exec_nonbuiltin(node);
+			exec_nonbuiltin(node, shell);
 	}
 	// parent process
 	prepare_pipe_parent(node);

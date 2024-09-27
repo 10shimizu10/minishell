@@ -6,15 +6,13 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 00:48:24 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 13:19:26 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <readline/readline.h>
 #include <readline/history.h>
-
-int	last_status;
 
 void interpret(char *line, t_shell *shell)
 {
@@ -51,20 +49,20 @@ int main()
     shell.readline_interrupted = false;
 
     rl_outstream = stderr;
-	initenv();
-	setup_signal();
+    initenv(&shell);  // 修正: &shellを引数として渡す
+    setup_signal();
 
-    while(1)
+    while (1)
     {
         line = readline("minishell$ ");
-        if(line == NULL)
-            break ;
+        if (line == NULL)
+            break;
 
-        if(*line)
+        if (*line)
             add_history(line);
         interpret(line, &shell);
         free(line);
     }
-    //write_history("history.txt");
+    // write_history("history.txt");
     exit(shell.last_status);
 }

@@ -23,11 +23,27 @@
 # define SINGLE_QUOTE_CHAR '\''
 # define DOUBLE_QUOTE_CHAR '"'
 
+typedef struct s_item	t_item;
+struct					s_item
+{
+	char				*name;
+	char				*value;
+	t_item				*next;
+};
+
+typedef struct s_map	t_map;
+struct					s_map
+{
+	t_item				item_head;
+};
+extern t_map			*envmap;
+
 typedef struct s_shell
 {
-	int					last_status;
-	bool				syntax_error;
-	bool				readline_interrupted;
+    int last_status;
+    bool syntax_error;
+    bool readline_interrupted;
+    t_map *envmap;
 }						t_shell;
 
 typedef enum e_token_type
@@ -76,21 +92,6 @@ typedef struct s_node
 	int					outpipe[2];
 	t_node				*command;
 }						t_node;
-
-typedef struct s_item	t_item;
-struct					s_item
-{
-	char				*name;
-	char				*value;
-	t_item				*next;
-};
-
-typedef struct s_map	t_map;
-struct					s_map
-{
-	t_item				item_head;
-};
-extern t_map			*envmap;
 
 // error.c
 void					todo(const char *msg) __attribute__((noreturn));
@@ -150,7 +151,7 @@ void					prepare_pipe_parent(t_node *node);
 
 // exec.c
 int						exec(t_node *node, t_shell *shell);
-char					*search_path(const char *filename);
+char					*search_path(const char *filename, t_shell *shell);
 void					validate_access(const char *path, const char *filename);
 pid_t					exec_pipeline(t_node *node, t_shell *shell);
 int						wait_pipeline(pid_t last_pid);
@@ -169,22 +170,22 @@ bool					is_numeric(char *s);
 int						builtin_exit(char **argv, t_shell *shell);
 
 // builtin_export.c
-int						builtin_export(char **argv);
+int						builtin_export(char **argv, t_shell *shell);
 
 // builtin_unset.c
-int						builtin_unset(char **argv);
+int						builtin_unset(char **argv, t_shell *shell);
 
 // builtin_env.c
-int						builtin_env(char **argv);
+int						builtin_env(char **argv, t_shell *shell);
 
 // builtin_cd.c
-int						builtin_cd(char **argv);
+int						builtin_cd(char **argv, t_shell *shell);
 
 // builtin_echo.c
 int						builtin_echo(char **argv);
 
 // builtin_pwd.c
-int						builtin_pwd(char **argv);
+int						builtin_pwd(char **argv, t_shell *shell);
 
 // map.c
 t_item					*item_new(char *name, char *value);
@@ -200,8 +201,8 @@ size_t					map_len(t_map *map, bool count_null_value);
 void					map_printall(t_map *map);
 
 // env.c
-char					*xgetenv(const char *name);
-void					initenv(void);
+char					*xgetenv(const char *name, t_shell *shell);
+void					initenv(t_shell *shell);
 char					**get_environ(t_map *map);
 
 // ft_utils

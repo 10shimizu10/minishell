@@ -6,27 +6,25 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 00:38:39 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 13:02:26 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_map		*envmap;
-
 static void	envmap_init(t_map *map, char **ep);
 
-char	*xgetenv(const char *name)
+char	*xgetenv(const char *name, t_shell *shell)
 {
-	return (map_get(envmap, name));
+	return (map_get(shell->envmap, name));
 }
 
-void	initenv(void)
+void	initenv(t_shell *shell)
 {
 	extern char	**environ;
 
-	envmap = map_new();
-	envmap_init(envmap, environ);
+	shell->envmap = map_new();
+	envmap_init(shell->envmap, environ);
 }
 
 char	**get_environ(t_map *map)

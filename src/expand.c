@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 00:53:51 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 13:21:06 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ void	expand_special_parameter_str(char **dst, char **rest, char *p, t_shell *she
 #include <stdlib.h>
 #include <stdio.h>
 
-void expand_variable_str(char **dst, char **rest, char *p)
+void expand_variable_str(char **dst, char **rest, char *p, t_shell *shell)
 {
     char *name;
     char *value;
@@ -189,7 +189,7 @@ void expand_variable_str(char **dst, char **rest, char *p)
     while (is_alpha_num_under(*p))
         append_char(&name, *p++);
     
-    value = xgetenv(name);
+    value = xgetenv(name, shell);
     free(name);
     
     if (value)
@@ -231,7 +231,7 @@ void	append_double_quote(char **dst, char **rest, char *p, t_shell *shell)
 			if (*p == '\0')
 				assert_error("Unclosed double quote");
 			else if (is_variable(p))
-				expand_variable_str(dst, &p, p);
+				expand_variable_str(dst, &p, p, shell);
 			else if (is_special_parameter(p))
 				expand_special_parameter_str(dst, &p, p, shell);
 			else
@@ -264,7 +264,7 @@ void	expand_variable_token(t_token *token, t_shell *shell)
 		else if (*p == DOUBLE_QUOTE_CHAR)
 			append_double_quote(&new_word, &p, p, shell); // 構造体を渡す
 		else if (is_variable(p))
-			expand_variable_str(&new_word, &p, p);
+			expand_variable_str(&new_word, &p, p, shell);
 		else if (is_special_parameter(p))
 			expand_special_parameter_str(&new_word, &p, p, shell); // 構造体を渡す
 		else
@@ -308,7 +308,7 @@ char	*expand_heredoc_line(char *line, t_shell *shell)
 	while (*p)
 	{
 		if (is_variable(p))
-			expand_variable_str(&new_word, &p, p);
+			expand_variable_str(&new_word, &p, p, shell);
 		else if (is_special_parameter(p))
 			expand_special_parameter_str(&new_word, &p, p, shell); // 構造体を渡す
 		else

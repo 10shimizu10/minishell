@@ -6,18 +6,18 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 00:28:19 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 13:04:48 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	builtin_env(char **argv)
+int	builtin_env(char **argv, t_shell *shell)
 {
 	t_item	*cur;
 
 	(void)argv;
-	cur = envmap->item_head.next;
+	cur = shell->envmap->item_head.next;
 	while (cur)
 	{
 		if (cur->value)
