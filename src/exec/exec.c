@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 17:47:31 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 18:28:48 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ char	*search_path_mode(const char *filename, int mode, t_shell *shell)
 		//     ^
 		//     end
 		bzero(path, PATH_MAX);
-		end = strchr(value, ':');
+		end = ft_strchr(value, ':');
 		if (end)
 			strncpy(path, value, end - value);
 		else

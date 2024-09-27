@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 17:22:47 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 17:53:35 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,4 +30,9 @@ bool	is_alpha_under(char c)
 bool	is_alpha_num_under(char c)
 {
 	return (is_alpha_under(c) || is_digit(c));
+}
+
+bool	is_blank(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n');
 }

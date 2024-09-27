@@ -203,7 +203,8 @@ int						map_set(t_map *map, const char *name,
 int						map_unset(t_map *map, const char *name);
 size_t					map_len(t_map *map, bool count_null_value);
 void					map_printall(t_map *map);
-
+t_item	*find_item(t_item *head, const char *name);
+void	update_item(t_item *item, const char *value);
 // env.c
 char					*xgetenv(const char *name, t_shell *shell);
 void					initenv(t_shell *shell);
@@ -226,6 +227,7 @@ int						ft_printf(const char *format, ...);
 void					*ft_memcpy(void *dst, const void *src, size_t n);
 int						ft_memcmp(const void *s1, const void *s2, size_t n);
 bool					is_digit(char c);
+bool	is_blank(char c);
 bool					is_identifier(const char *s);
 bool					is_alpha_under(char c);
 bool					is_alpha_num_under(char c);

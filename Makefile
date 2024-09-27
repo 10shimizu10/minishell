@@ -24,7 +24,9 @@ SRCS     = src/main.c\
 		   src/builtin/builtin_cd1.c\
 		   src/builtin/builtin_echo.c\
 		   src/builtin/builtin_pwd.c\
-		   src/map/map.c\
+		   src/map/map0.c\
+		   src/map/map1.c\
+		   src/map/map2.c\
 		   src/env.c\
 		   src/ft_utils/ft_utils0.c\
 		   src/ft_utils/ft_utils1.c\

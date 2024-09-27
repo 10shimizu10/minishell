@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 13:24:54 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 17:53:20 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,6 @@ t_token	*new_token(char *word, t_token_type kind)
 	token->word = word;
 	token->kind = kind;
 	return (token);
-}
-
-bool	is_blank(char c)
-{
-	return (c == ' ' || c == '\t' || c == '\n');
 }
 
 bool	consume_blank(char **rest, char *line)
@@ -149,6 +144,7 @@ t_token	*tokenize(char *line, t_shell *shell)
 	token->next = new_token(NULL, TOKEN_EOF);
 	return (head.next);
 }
+
 char	**tail_recursive(t_token *token, int nargs, char **argv)
 {
 	char	**new_argv;

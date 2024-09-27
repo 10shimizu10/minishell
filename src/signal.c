@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 17:50:11 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 17:54:21 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,6 @@ void	setup_signal(void)
 	rl_outstream = stderr;
 	if (isatty(STDIN_FILENO))
 		rl_event_hook = check_state;
-	set_signal(SIGQUIT, SIG_IGN);  // SIGQUITを無視
-	set_signal(SIGINT, handler);   // SIGINTハンドラを設定
+	set_signal(SIGQUIT, SIG_IGN);
+	set_signal(SIGINT, handler);
 }
