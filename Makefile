@@ -10,7 +10,9 @@ SRCS     = src/main.c\
            src/tokenize/tokenize.c\
            src/destructor.c\
 		   src/expand/expand.c\
-		   src/parse/parse.c\
+		   src/parse/parse0.c\
+		   src/parse/parse1.c\
+		   src/parse/parse2.c\
 		   src/redirect/redirect0.c\
 		   src/redirect/redirect1.c\
 		   src/pipe.c\
