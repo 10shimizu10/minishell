@@ -6,13 +6,11 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 01:22:38 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 13:31:26 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-bool	readline_interrupted = false;
 
 static bool	is_valid_fd(int fd)
 {
@@ -50,13 +48,13 @@ int	read_heredoc(const char *delimiter, bool is_delim_unquoted, t_shell *shell)
 
 	if (pipe(pfd) < 0)
 		fatal_error("pipe");
-    readline_interrupted = false;
+    shell->readline_interrupted = false;
 	while (1)
 	{
 		line = readline("> ");
 		if (line == NULL)
 			break ;
-		if (readline_interrupted)
+		if (shell->readline_interrupted)
 		{
 			free(line);
 			break ;
@@ -73,7 +71,7 @@ int	read_heredoc(const char *delimiter, bool is_delim_unquoted, t_shell *shell)
 		free(line);
 	}
 	close(pfd[1]);
-	if (readline_interrupted)
+	if (shell->readline_interrupted)
 	{
 		close(pfd[0]);
 		return (-1);

@@ -8,6 +8,7 @@
 # include <limits.h>
 # include <stdio.h>
 # include <readline/readline.h>
+# include <readline/history.h>
 # include <signal.h>
 # include <stdarg.h>
 # include <stdbool.h>
@@ -22,6 +23,7 @@
 # define ERROR_OPEN_REDIR 1
 # define SINGLE_QUOTE_CHAR '\''
 # define DOUBLE_QUOTE_CHAR '"'
+# define ERROR_PREFIX "minishell: "
 
 typedef struct s_item	t_item;
 struct					s_item
@@ -40,10 +42,10 @@ extern t_map			*envmap;
 
 typedef struct s_shell
 {
-    int last_status;
-    bool syntax_error;
-    bool readline_interrupted;
-    t_map *envmap;
+	int					last_status;
+	bool				syntax_error;
+	bool				readline_interrupted;
+	t_map				*envmap;
 }						t_shell;
 
 typedef enum e_token_type
