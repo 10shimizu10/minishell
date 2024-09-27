@@ -11,7 +11,8 @@ SRCS     = src/main.c\
            src/destructor.c\
 		   src/expand/expand.c\
 		   src/parse/parse.c\
-		   src/redirect/redirect.c\
+		   src/redirect/redirect0.c\
+		   src/redirect/redirect1.c\
 		   src/pipe.c\
 		   src/exec/exec0.c\
 		   src/exec/exec1.c\
