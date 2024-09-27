@@ -100,9 +100,9 @@ void					assert_error(const char *msg) __attribute__((noreturn));
 void					err_exit(const char *location, const char *msg,
 							int status) __attribute__((noreturn));
 void					tokenize_error(const char *location, char **rest,
-							char *line);
+							char *line, t_shell *shell);
 void					parse_error(const char *location, t_token **rest,
-							t_token *token);
+							t_token *token, t_shell *shell);
 void					xperror(const char *location);
 void					builtin_error(const char *func, const char *name,
 							const char *err);
@@ -118,7 +118,7 @@ bool					is_operator(const char *s);
 bool					is_metacharacter(char c);
 bool					is_word(const char *s);
 t_token					*operator(char **rest, char *line);
-t_token					*word(char **rest, char *line);
+t_token					*word(char **rest, char *line, t_shell *shell);
 
 // expand.c
 void					expand(t_node *node, t_shell *shell);

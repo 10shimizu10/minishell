@@ -6,15 +6,13 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 00:43:31 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 13:26:39 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 #define ERROR_PREFIX "minishell: "
-
-bool		syntax_error = false;
 
 static void	perror_prefix(void)
 {
@@ -64,13 +62,14 @@ void	todo(const char *msg)
 	exit(255);
 }
 
-void	tokenize_error(const char *location, char **rest, char *line)
+void	tokenize_error(const char *location, char **rest, char *line,
+		t_shell *shell)
 {
 	const char	*error_msg_part1 = "syntax error near unexpected character `";
 	const char	*error_msg_part2 = "' in ";
 	const char	*error_msg_part3 = "\n";
 
-	syntax_error = true;
+	shell->syntax_error = true;
 	perror_prefix();
 	write(STDERR_FILENO, error_msg_part1, sizeof(error_msg_part1) - 1);
 	write(STDERR_FILENO, line, 1);
@@ -82,13 +81,14 @@ void	tokenize_error(const char *location, char **rest, char *line)
 	*rest = line;
 }
 
-void	parse_error(const char *location, t_token **rest, t_token *tok)
+void	parse_error(const char *location, t_token **rest, t_token *tok,
+		t_shell *shell)
 {
 	const char	*error_msg_part1 = "syntax error near unexpected token `";
 	const char	*error_msg_part2 = "' in ";
 	const char	*error_msg_part3 = "\n";
 
-	syntax_error = true;
+	shell->syntax_error = true;
 	perror_prefix();
 	write(STDERR_FILENO, error_msg_part1, sizeof(error_msg_part1) - 1);
 	write(STDERR_FILENO, tok->word, ft_strlen(tok->word));
@@ -105,6 +105,7 @@ void	xperror(const char *location)
 	perror_prefix();
 	perror(location);
 }
+
 void	builtin_error(const char *func, const char *name, const char *err)
 {
 	perror_prefix();

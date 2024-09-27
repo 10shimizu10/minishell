@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 01:08:45 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 13:24:54 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ t_token	*operator(char **rest, char *line)
 	assert_error("Unexpected operator");
 }
 
-t_token	*word(char **rest, char *line)
+t_token	*word(char **rest, char *line, t_shell *shell)
 {
 	const char	*start = line;
 	char		*word;
@@ -98,7 +98,7 @@ t_token	*word(char **rest, char *line)
 				line++;
 			if (*line == '\0')
 			{
-				tokenize_error("Unclosed single quote", &line, line);
+				tokenize_error("Unclosed single quote", &line, line, shell);
 				break ;
 			}
 			else
@@ -111,7 +111,7 @@ t_token	*word(char **rest, char *line)
 				line++;
 			if (*line == '\0')
 			{
-				tokenize_error("Unclosed double quote", &line, line);
+				tokenize_error("Unclosed double quote", &line, line, shell);
 				break ;
 			}
 			else
@@ -142,9 +142,9 @@ t_token	*tokenize(char *line, t_shell *shell)
 		else if (is_metacharacter(*line))
 			token = token->next = operator(&line, line);
 		else if (is_word(line))
-			token = token->next = word(&line, line);
+			token = token->next = word(&line, line, shell);
 		else
-			tokenize_error("Unexpected Token", &line, line); // ここでエラーが起きたとき、構造体の値を設定
+			tokenize_error("Unexpected Token", &line, line, shell); // ここでエラーが起きたとき、構造体の値を設定
 	}
 	token->next = new_token(NULL, TOKEN_EOF);
 	return (head.next);

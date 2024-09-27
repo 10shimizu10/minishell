@@ -6,29 +6,30 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 13:17:35 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/27 13:26:52 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int exec(t_node *node, t_shell *shell)
+int	exec(t_node *node, t_shell *shell)
 {
 	pid_t	last_pid;
 	int		status;
 
 	if (open_redir_file(node, shell) < 0)
-		return (ERROR_OPEN_REDIR);  // リダイレクトエラー時の処理
+		return (ERROR_OPEN_REDIR); // リダイレクトエラー時の処理
 	if (node->next == NULL && is_builtin(node))
-		status = exec_builtin(node, shell);  // shell構造体を渡す
+		status = exec_builtin(node, shell); // shell構造体を渡す
 	else
 	{
-		last_pid = exec_pipeline(node, shell);  // パイプラインを実行
-		status = wait_pipeline(last_pid);  // パイプラインの終了待機
+		last_pid = exec_pipeline(node, shell); // パイプラインを実行
+		status = wait_pipeline(last_pid);      // パイプラインの終了待機
 	}
-	shell->last_status = status;  // 最後のステータスをシェル構造体に保存
+	shell->last_status = status; // 最後のステータスをシェル構造体に保存
 	return (status);
 }
+
 char	*search_path_mode(const char *filename, int mode, t_shell *shell)
 {
 	char	path[PATH_MAX];
