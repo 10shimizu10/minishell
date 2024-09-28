@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 17:21:16 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/28 14:15:15 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@ void	print_allenv(t_shell *shell)
 	while (cur)
 	{
 		write(1, "declare -x ", 11);
-		write(1, cur->name, strlen(cur->name));
+		write(1, cur->name, ft_strlen(cur->name));
 		if (cur->value)
 		{
 			write(1, "=\"", 2);
-			write(1, cur->value, strlen(cur->value));
+			write(1, cur->value, ft_strlen(cur->value));
 			write(1, "\"", 1);
 		}
 		write(1, "\n", 1);

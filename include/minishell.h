@@ -126,6 +126,16 @@ t_token					*word(char **rest, char *line, t_shell *shell);
 // expand.c
 void					expand(t_node *node, t_shell *shell);
 char					*expand_heredoc_line(char *line, t_shell *shell);
+void					append_char(char **s, char c);
+void					append_num(char **dst, unsigned int num);
+void					append_single_quote(char **dst, char **rest, char *p);
+void					append_double_quote(char **dst, char **rest, char *p,
+							t_shell *shell);
+void					expand_variable_str(char **dst, char **rest, char *p,
+							t_shell *shell);
+void					expand_special_parameter_str(char **dst, char **rest,
+							char *p, t_shell *shell);
+void					expand_quote_removal(t_node *node);
 
 // destructor.c
 void					free_node(t_node *node);
@@ -233,6 +243,10 @@ bool					is_blank(char c);
 bool					is_identifier(const char *s);
 bool					is_alpha_under(char c);
 bool					is_alpha_num_under(char c);
+bool					is_variable(char *s);
+bool					is_special_parameter(char *s);
+bool					is_metacharacter(char c);
+bool					is_word(const char *s);
 char					*ft_strncpy(char *dst, const char *src, size_t len);
 
 bool					equal_op(t_token *tok, char *op);

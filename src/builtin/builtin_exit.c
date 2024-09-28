@@ -6,24 +6,11 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 17:21:29 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/28 13:52:58 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-bool	is_numeric(char *s)
-{
-	if (!is_digit(*s))
-		return (false);
-	while (*s)
-	{
-		if (!is_digit(*s))
-			return (false);
-		s++;
-	}
-	return (true);
-}
 
 int	builtin_exit(char **argv, t_shell *shell)
 {

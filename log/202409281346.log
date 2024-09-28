@@ -1,0 +1,400 @@
+[]                                                          :  diff OK  status OK
+[/bin/pwd]                                                  :  diff OK  status OK
+[/bin/echo]                                                 :  diff OK  status OK
+[/bin/ls]                                                   :  diff OK  status OK
+[pwd]                                                       :  diff OK  status OK
+[echo]                                                      :  diff OK  status OK
+[ls]                                                        :  diff OK  status OK
+[./a.out]                                                   :  diff OK  status OK
+[a.out]                                                     :  diff OK  status OK
+[nosuchfile]                                                :  diff OK  status OK
+[""]                                                        :  diff OK  status OK
+[..]                                                        :  diff OK  status OK
+[./]                                                        :  diff OK  status OK
+[/]                                                         :  diff OK  status OK
+[/etc]                                                      :  diff OK  status OK
+[/etc/]                                                     :  diff OK  status OK
+[////]                                                      :  diff OK  status OK
+[no_exec_perm]                                              :  diff OK  status OK
+[./no_exec_perm]                                            :  diff OK  status OK
+[no_read_perm]                                              :  diff OK  status OK
+[./no_read_perm]                                            :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/a:/tmp/b"\nsimple_test]      :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/b:/tmp/a"\nsimple_test]      :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/a:/tmp/b"\nsimple_test]      :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/b:/tmp/a"\nsimple_test]      :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/a:/tmp/b"\nsimple_test]      :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/b:/tmp/a"\nsimple_test]      :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/a:/tmp/b"\nsimple_test]      :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/b:/tmp/a"\nsimple_test]      :  diff OK  status OK
+[ls /]                                                      :  diff OK  status OK
+[echo hello    world     ]                                  :  diff OK  status OK
+[nosuchfile\n\n]                                            :  diff OK  status OK
+[./print_args 'hello   world' '42Tokyo']                    :  diff OK  status OK
+[echo 'hello   world' '42Tokyo']                            :  diff OK  status OK
+[echo '"hello   world"' '42Tokyo']                          :  diff OK  status OK
+[./print_args "hello   world" "42Tokyo"]                    :  diff OK  status OK
+[echo "hello   world" "42Tokyo"]                            :  diff OK  status OK
+[echo "'hello   world'" "42Tokyo"]                          :  diff OK  status OK
+[echo hello'      world']                                   :  diff OK  status OK
+[echo hello'  world  '"  42Tokyo  "]                        :  diff OK  status OK
+[echo hello >hello.txt]                                     :  diff OK  status OK  [hello.txt] OK
+[echo hello >f1>f2>f3]                                      :  diff OK  status OK  [f1] OK  [f2] OK  [f3] OK
+[cat <Makefile]                                             :  diff OK  status OK
+[cat <f1<f2<f3]                                             :  diff OK  status OK
+[cat <hoge]                                                 :  diff OK  status OK
+[pwd >>pwd.txt]                                             :  diff OK  status OK  [pwd.txt] OK
+[pwd >>pwd.txt \n pwd >>pwd.txt]                            :  diff OK  status OK  [pwd.txt] OK
+[cat <<EOF\nhello\nworld\nEOF\nNOPRINT]                     :  diff OK  status OK
+[cat <<EOF<<eof\nhello\nworld\nEOF\neof\nNOPRINT]           :  diff OK  status OK
+[cat <<EOF\nhello\nworld]                                   :  diff OK  status OK
+[cat <<E"O"F\nhello\nworld\nEOF\nNOPRINT]                   :  diff OK  status OK
+[cat <<EOF   \n$USER\n$NO_SUCH_VAR\n$FOO$BAR\nEOF]          :  diff OK  status OK
+[cat <<"EOF" \n$USER\n$NO_SUCH_VAR\n$FOO$BAR\nEOF]          :  diff OK  status OK
+[cat <<EO"F" \n$USER\n$NO_SUCH_VAR\n$FOO$BAR\nEOF]          :  diff OK  status OK
+[cat <<$EOF         \neof\n$EOF\nEOF]                       :  diff OK  status OK
+[cat <<"$EOF"       \neof\n$EOF\nEOF]                       :  diff OK  status OK
+[cat Makefile | grep minishell]                             :  diff OK  status OK
+[cat | cat | ls\n\n]                                        :  diff OK  status OK
+[echo $USER]                                                :  diff OK  status OK
+[echo $USER$PATH$TERM]                                      :  diff OK  status OK
+[echo "$USER  $PATH   $TERM"]                               :  diff OK  status OK
+[echo $?]                                                   :  diff OK  status OK
+[invalid\necho $?\necho $?]                                 :  diff OK  status OK
+[exit42\necho $?\necho $?]                                  :  diff OK  status OK
+[exit42\n\necho $?\necho $?]                                :  diff OK  status OK
+[export FOO="echo hello"\n$FOO]                             :  diff NG  status OK
+[export TEST="cho -n"\ne$TEST]                              :  diff NG  status OK
+[export FOO="a       b"\necho $FOO]                         :  diff NG  status OK
+[export FOO="a       b"\necho hello$FOO]                    :  diff NG  status OK
+[export FOO="a       b"\necho $FOO"world"]                  :  diff NG  status OK
+[export FOO="a       b"\necho hello$FOO"world"]             :  diff NG  status OK
+[export FOO="echo a      b"\n$FOO]                          :  diff NG  status OK
+[export IFS=""\nexport FOO="echo hello"\n$FOO]              :  diff NG  status NG, expected 127 but got 0
+[export IFS=""\nexport TEST="cho -n"\ne$TEST]               :  diff NG  status NG, expected 127 but got 0
+[export IFS=""\nexport FOO="a       b"\n./print_args $FOO]  :  diff NG  status OK
+[export IFS=""\nexport FOO="a       b"\n./print_args hello$FOO]:  diff NG  status OK
+[export IFS=""\nexport FOO="a       b"\n./print_args $FOO"world"]:  diff NG  status OK
+[export IFS=""\nexport FOO="a       b"\n./print_args hello$FOO"world"]:  diff NG  status OK
+[export IFS=""\nexport FOO="./print_args a      b"\n$FOO]   :  diff NG  status NG, expected 127 but got 0
+[export IFS="abc"\nexport FOO="./print_argsahellobbbbbbworldccc"\n$FOO]:  diff OK  status OK
+[export IFS="abc"\nexport TEST="choa-n"\ne$TEST]            :  diff OK  status OK
+[export IFS="abc"\nexport FOO="xabcabcy"\n./print_args $FOO]:  diff NG  status OK
+[export IFS="abc"\nexport FOO="xabcabcy"\n./print_args hello$FOO]:  diff NG  status OK
+[export IFS="abc"\nexport FOO="xabcabcy"\n./print_args $FOO"world"]:  diff NG  status OK
+[export IFS="abc"\nexport FOO="xabcabcy"\n./print_args hello$FOO"world"]:  diff NG  status OK
+[export IFS="abc"\nexport FOO="./print_argsaaaaaxabcabcy"\n$FOO]:  diff OK  status OK
+[export IFS="a"\nexport FOO="aaahelloaaaworldaaa"\n./print_args $FOO]:  diff NG  status OK
+[export IFS="a "\nexport FOO="   hello   world   "\n./print_args $FOO]:  diff NG  status OK
+[export IFS="a "\nexport FOO=" a a hello a a world a a "\n./print_args $FOO]:  diff NG  status OK
+[export IFS="a "\nexport FOO="aaa"\n./print_args $FOO]      :  diff NG  status OK
+[export IFS="a "\nexport FOO="helloaaa"\n./print_args $FOO] :  diff NG  status OK
+[export IFS="a "\nexport FOO="helloaaaworld"\n./print_args $FOO]:  diff NG  status OK
+[export IFS="a "\nexport FOO="aaahelloaaaworldaaa"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello: : :"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello: : : "\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello : : :"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello : : : "\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO=": : :hello: : :"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO=": : : hello: : : "\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO=" : : :hello : : :"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO=" : : : hello : : : "\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello: : :world"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello : : :world"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello: : : world"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello : : : world"\n./print_args $FOO]:  diff NG  status OK
+[echo "$IFS"]                                               :  diff NG  status OK
+[echo "$IFS"]                                               :  diff NG  status OK
+[export FOO="hello:world:42Tokyo"\n./print_args $FOO]       :  diff OK  status OK
+[./infinite_loop]                                           :  diff OK  status OK
+[./infinite_loop]                                           :  diff OK  status OK
+[./infinite_loop]                                           :  diff OK  status OK
+[./infinite_loop]                                           :  diff OK  status OK
+[./infinite_loop]                                           :  diff OK  status OK
+[./infinite_loop]                                           :  diff OK  status OK
+[./infinite_loop]                                           :  diff OK  status OK
+[exit]                                                      :  diff OK  status OK
+[exit 42]                                                   :  diff OK  status OK
+[exit -42]                                                  :  diff OK  status NG, expected 214 but got 255
+[exit +42]                                                  :  diff OK  status NG, expected 42 but got 255
+[exit ""]                                                   :  diff OK  status OK
+[exit hello]                                                :  diff OK  status OK
+[exit 42Tokyo]                                              :  diff OK  status OK
+[exit 1 2]                                                  :  diff OK  status OK
+[exit 9223372036854775806]                                  :  diff OK  status OK
+[exit 9223372036854775807]                                  :  diff OK  status OK
+[exit 9223372036854775808]                                  :  diff OK  status OK
+[exit -9223372036854775807]                                 :  diff OK  status NG, expected 1 but got 255
+[exit -9223372036854775808]                                 :  diff OK  status NG, expected 0 but got 255
+[exit -9223372036854775809]                                 :  diff OK  status OK
+[export]                                                    :  diff NG  status OK
+[export | grep nosuch | sort]                               :  diff OK  status OK
+[export nosuch\n export | grep nosuch | sort]               :  diff OK  status OK
+[export nosuch=fuga\n export | grep nosuch | sort]          :  diff NG  status OK
+[export nosuch=fuga hoge=nosuch\n export | grep nosuch | sort]:  diff NG  status OK
+[export [invalid]]                                          :  diff OK  status OK
+[export [invalid_nosuch]\n export | grep nosuch | sort]     :  diff OK  status OK
+[export [invalid]=nosuch\n export | grep nosuch | sort]     :  diff NG  status OK
+[export [invalid] nosuch hoge=nosuch\n export | grep nosuch | sort]:  diff OK  status OK
+[export nosuch [invalid] hoge=nosuch\n export | grep nosuch | sort]:  diff NG  status OK
+[export nosuch hoge=nosuch [invalid]\n export | grep nosuch | sort]:  diff OK  status OK
+[export nosuch="nosuch2=hoge"\nexport $nosuch\n export | grep nosuch | sort]:  diff NG  status OK
+[unset]                                                     :  diff OK  status OK
+[unset hoge]                                                :  diff NG  status OK
+[unset fuga]                                                :  diff OK  status OK
+[unset nosuch]                                              :  diff NG  status OK
+[unset [invalid]]                                           :  diff NG  status OK
+[unset hoge fuga]                                           :  diff NG  status OK
+[unset hoge nosuch fuga]                                    :  diff OK  status OK
+[unset fuga \n export | echo $fuga]                         :  diff NG  status OK
+[unset [invalid] fuga \n echo $fuga]                        :  diff OK  status OK
+[env | grep hoge | sort]                                    :  diff NG  status OK
+[cd]                                                        :  diff OK  status OK
+[cd .]                                                      :  diff OK  status OK
+[cd ..]                                                     :  diff OK  status OK
+[cd ///]                                                    :  diff OK  status OK
+[cd /tmp]                                                   :  diff NG  status OK
+[cd /tmp/]                                                  :  diff NG  status OK
+[cd /tmp///]                                                :  diff NG  status OK
+[cd /../../../././.././]                                    :  diff NG  status OK
+[cd src]                                                    :  diff NG  status OK
+[unset HOME\ncd]                                            :  diff NG  status OK
+[cd \n echo $PWD]                                           :  diff OK  status OK
+[cd \n echo $PWD]                                           :  diff NG  status OK
+[cd .\n echo $PWD]                                          :  diff OK  status OK
+[cd ..\n echo $PWD]                                         :  diff OK  status OK
+[cd ///\n echo $PWD]                                        :  diff OK  status OK
+[cd /tmp\n echo $PWD]                                       :  diff OK  status OK
+[cd /tmp/\n echo $PWD]                                      :  diff OK  status OK
+[cd /tmp///\n echo $PWD]                                    :  diff OK  status OK
+[cd /../../../././.././\n echo $PWD]                        :  diff OK  status OK
+[cd src\n echo $PWD]                                        :  diff OK  status OK
+[unset HOME\ncd \n echo $PWD]                               :  diff OK  status OK
+[echo]                                                      :  diff OK  status OK
+[echo hello]                                                :  diff OK  status OK
+[echo hello "    " world]                                   :  diff OK  status OK
+[echo -n]                                                   :  diff OK  status OK
+[echo -n hello]                                             :  diff OK  status OK
+[echo -n hello world]                                       :  diff OK  status OK
+[echo hello -n]                                             :  diff OK  status OK
+[echo -nn]                                                  :  diff OK  status OK
+[echo -n-n-n]                                               :  diff NG  status OK
+[echo ";|()"]                                               :  diff OK  status OK
+[pwd]                                                       :  diff OK  status OK
+[cd\npwd]                                                   :  diff OK  status OK
+[cd src\npwd]                                               :  diff OK  status OK
+[cd /etc\npwd]                                              :  diff OK  status OK
+[cd . \n pwd \n echo $PWD $OLDPWD]                          :  diff OK  status OK
+[cd .. \n pwd \n echo $PWD $OLDPWD]                         :  diff OK  status OK
+[cd /// \n pwd \n echo $PWD $OLDPWD]                        :  diff OK  status OK
+[cd /tmp/// \n pwd \n echo $PWD $OLDPWD]                    :  diff OK  status OK
+[unset PWD\npwd\ncd /etc\npwd]                              :  diff OK  status OK
+[unset PWD \n cd \n echo $PWD \ncd /tmp\necho $PWD]         :  diff OK  status OK
+[unset PWD\ncd\necho $OLDPWD\ncd /tmp\necho $OLDPWD]        :  diff OK  status OK
+[unset PWD\ncd\nexport|grep PWD\ncd /tmp\nexport|grep PWD]  :  diff NG  status OK
+[unset PWD\ncd\nenv|grep PWD\ncd /tmp\nenv|grep PWD]        :  diff NG  status OK
+Results Summary
+diff OK count: 133
+diff NG count: 55
+status OK count: 175
+status NG count: 7
+[]                                                          :  diff OK  status OK
+[/bin/pwd]                                                  :  diff OK  status OK
+[/bin/echo]                                                 :  diff OK  status OK
+[/bin/ls]                                                   :  diff OK  status OK
+[pwd]                                                       :  diff OK  status OK
+[echo]                                                      :  diff OK  status OK
+[ls]                                                        :  diff OK  status OK
+[./a.out]                                                   :  diff OK  status OK
+[a.out]                                                     :  diff OK  status OK
+[nosuchfile]                                                :  diff OK  status OK
+[""]                                                        :  diff OK  status OK
+[..]                                                        :  diff OK  status OK
+[./]                                                        :  diff OK  status OK
+[/]                                                         :  diff OK  status OK
+[/etc]                                                      :  diff OK  status OK
+[/etc/]                                                     :  diff OK  status OK
+[////]                                                      :  diff OK  status OK
+[no_exec_perm]                                              :  diff OK  status OK
+[./no_exec_perm]                                            :  diff OK  status OK
+[no_read_perm]                                              :  diff OK  status OK
+[./no_read_perm]                                            :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/a:/tmp/b"\nsimple_test]      :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/b:/tmp/a"\nsimple_test]      :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/a:/tmp/b"\nsimple_test]      :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/b:/tmp/a"\nsimple_test]      :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/a:/tmp/b"\nsimple_test]      :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/b:/tmp/a"\nsimple_test]      :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/a:/tmp/b"\nsimple_test]      :  diff OK  status OK
+[unset PATH\nexport PATH="/tmp/b:/tmp/a"\nsimple_test]      :  diff OK  status OK
+[ls /]                                                      :  diff OK  status OK
+[echo hello    world     ]                                  :  diff OK  status OK
+[nosuchfile\n\n]                                            :  diff OK  status OK
+[./print_args 'hello   world' '42Tokyo']                    :  diff OK  status OK
+[echo 'hello   world' '42Tokyo']                            :  diff OK  status OK
+[echo '"hello   world"' '42Tokyo']                          :  diff OK  status OK
+[./print_args "hello   world" "42Tokyo"]                    :  diff OK  status OK
+[echo "hello   world" "42Tokyo"]                            :  diff OK  status OK
+[echo "'hello   world'" "42Tokyo"]                          :  diff OK  status OK
+[echo hello'      world']                                   :  diff OK  status OK
+[echo hello'  world  '"  42Tokyo  "]                        :  diff OK  status OK
+[echo hello >hello.txt]                                     :  diff OK  status OK  [hello.txt] OK
+[echo hello >f1>f2>f3]                                      :  diff OK  status OK  [f1] OK  [f2] OK  [f3] OK
+[cat <Makefile]                                             :  diff OK  status OK
+[cat <f1<f2<f3]                                             :  diff OK  status OK
+[cat <hoge]                                                 :  diff OK  status OK
+[pwd >>pwd.txt]                                             :  diff OK  status OK  [pwd.txt] OK
+[pwd >>pwd.txt \n pwd >>pwd.txt]                            :  diff OK  status OK  [pwd.txt] OK
+[cat <<EOF\nhello\nworld\nEOF\nNOPRINT]                     :  diff OK  status OK
+[cat <<EOF<<eof\nhello\nworld\nEOF\neof\nNOPRINT]           :  diff OK  status OK
+[cat <<EOF\nhello\nworld]                                   :  diff OK  status OK
+[cat <<E"O"F\nhello\nworld\nEOF\nNOPRINT]                   :  diff OK  status OK
+[cat <<EOF   \n$USER\n$NO_SUCH_VAR\n$FOO$BAR\nEOF]          :  diff OK  status OK
+[cat <<"EOF" \n$USER\n$NO_SUCH_VAR\n$FOO$BAR\nEOF]          :  diff OK  status OK
+[cat <<EO"F" \n$USER\n$NO_SUCH_VAR\n$FOO$BAR\nEOF]          :  diff OK  status OK
+[cat <<$EOF         \neof\n$EOF\nEOF]                       :  diff OK  status OK
+[cat <<"$EOF"       \neof\n$EOF\nEOF]                       :  diff OK  status OK
+[cat Makefile | grep minishell]                             :  diff OK  status OK
+[cat | cat | ls\n\n]                                        :  diff OK  status OK
+[echo $USER]                                                :  diff OK  status OK
+[echo $USER$PATH$TERM]                                      :  diff OK  status OK
+[echo "$USER  $PATH   $TERM"]                               :  diff OK  status OK
+[echo $?]                                                   :  diff OK  status OK
+[invalid\necho $?\necho $?]                                 :  diff OK  status OK
+[exit42\necho $?\necho $?]                                  :  diff OK  status OK
+[exit42\n\necho $?\necho $?]                                :  diff OK  status OK
+[export FOO="echo hello"\n$FOO]                             :  diff NG  status OK
+[export TEST="cho -n"\ne$TEST]                              :  diff NG  status OK
+[export FOO="a       b"\necho $FOO]                         :  diff NG  status OK
+[export FOO="a       b"\necho hello$FOO]                    :  diff NG  status OK
+[export FOO="a       b"\necho $FOO"world"]                  :  diff NG  status OK
+[export FOO="a       b"\necho hello$FOO"world"]             :  diff NG  status OK
+[export FOO="echo a      b"\n$FOO]                          :  diff NG  status OK
+[export IFS=""\nexport FOO="echo hello"\n$FOO]              :  diff NG  status NG, expected 127 but got 0
+[export IFS=""\nexport TEST="cho -n"\ne$TEST]               :  diff NG  status NG, expected 127 but got 0
+[export IFS=""\nexport FOO="a       b"\n./print_args $FOO]  :  diff NG  status OK
+[export IFS=""\nexport FOO="a       b"\n./print_args hello$FOO]:  diff NG  status OK
+[export IFS=""\nexport FOO="a       b"\n./print_args $FOO"world"]:  diff NG  status OK
+[export IFS=""\nexport FOO="a       b"\n./print_args hello$FOO"world"]:  diff NG  status OK
+[export IFS=""\nexport FOO="./print_args a      b"\n$FOO]   :  diff NG  status NG, expected 127 but got 0
+[export IFS="abc"\nexport FOO="./print_argsahellobbbbbbworldccc"\n$FOO]:  diff OK  status OK
+[export IFS="abc"\nexport TEST="choa-n"\ne$TEST]            :  diff OK  status OK
+[export IFS="abc"\nexport FOO="xabcabcy"\n./print_args $FOO]:  diff NG  status OK
+[export IFS="abc"\nexport FOO="xabcabcy"\n./print_args hello$FOO]:  diff NG  status OK
+[export IFS="abc"\nexport FOO="xabcabcy"\n./print_args $FOO"world"]:  diff NG  status OK
+[export IFS="abc"\nexport FOO="xabcabcy"\n./print_args hello$FOO"world"]:  diff NG  status OK
+[export IFS="abc"\nexport FOO="./print_argsaaaaaxabcabcy"\n$FOO]:  diff OK  status OK
+[export IFS="a"\nexport FOO="aaahelloaaaworldaaa"\n./print_args $FOO]:  diff NG  status OK
+[export IFS="a "\nexport FOO="   hello   world   "\n./print_args $FOO]:  diff NG  status OK
+[export IFS="a "\nexport FOO=" a a hello a a world a a "\n./print_args $FOO]:  diff NG  status OK
+[export IFS="a "\nexport FOO="aaa"\n./print_args $FOO]      :  diff NG  status OK
+[export IFS="a "\nexport FOO="helloaaa"\n./print_args $FOO] :  diff NG  status OK
+[export IFS="a "\nexport FOO="helloaaaworld"\n./print_args $FOO]:  diff NG  status OK
+[export IFS="a "\nexport FOO="aaahelloaaaworldaaa"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello: : :"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello: : : "\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello : : :"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello : : : "\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO=": : :hello: : :"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO=": : : hello: : : "\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO=" : : :hello : : :"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO=" : : : hello : : : "\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello: : :world"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello : : :world"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello: : : world"\n./print_args $FOO]:  diff NG  status OK
+[export IFS=" :"\nexport FOO="hello : : : world"\n./print_args $FOO]:  diff NG  status OK
+[echo "$IFS"]                                               :  diff NG  status OK
+[echo "$IFS"]                                               :  diff NG  status OK
+[export FOO="hello:world:42Tokyo"\n./print_args $FOO]       :  diff OK  status OK
+[./infinite_loop]                                           :  diff OK  status OK
+[./infinite_loop]                                           :  diff OK  status OK
+[./infinite_loop]                                           :  diff OK  status OK
+[./infinite_loop]                                           :  diff OK  status OK
+[./infinite_loop]                                           :  diff OK  status OK
+[./infinite_loop]                                           :  diff OK  status OK
+[./infinite_loop]                                           :  diff OK  status OK
+[exit]                                                      :  diff OK  status OK
+[exit 42]                                                   :  diff OK  status OK
+[exit -42]                                                  :  diff OK  status NG, expected 214 but got 255
+[exit +42]                                                  :  diff OK  status NG, expected 42 but got 255
+[exit ""]                                                   :  diff OK  status OK
+[exit hello]                                                :  diff OK  status OK
+[exit 42Tokyo]                                              :  diff OK  status OK
+[exit 1 2]                                                  :  diff OK  status OK
+[exit 9223372036854775806]                                  :  diff OK  status OK
+[exit 9223372036854775807]                                  :  diff OK  status OK
+[exit 9223372036854775808]                                  :  diff OK  status OK
+[exit -9223372036854775807]                                 :  diff OK  status NG, expected 1 but got 255
+[exit -9223372036854775808]                                 :  diff OK  status NG, expected 0 but got 255
+[exit -9223372036854775809]                                 :  diff OK  status OK
+[export]                                                    :  diff NG  status OK
+[export | grep nosuch | sort]                               :  diff OK  status OK
+[export nosuch\n export | grep nosuch | sort]               :  diff OK  status OK
+[export nosuch=fuga\n export | grep nosuch | sort]          :  diff OK  status OK
+[export nosuch=fuga hoge=nosuch\n export | grep nosuch | sort]:  diff OK  status OK
+[export [invalid]]                                          :  diff OK  status OK
+[export [invalid_nosuch]\n export | grep nosuch | sort]     :  diff OK  status OK
+[export [invalid]=nosuch\n export | grep nosuch | sort]     :  diff OK  status OK
+[export [invalid] nosuch hoge=nosuch\n export | grep nosuch | sort]:  diff OK  status OK
+[export nosuch [invalid] hoge=nosuch\n export | grep nosuch | sort]:  diff OK  status OK
+[export nosuch hoge=nosuch [invalid]\n export | grep nosuch | sort]:  diff OK  status OK
+[export nosuch="nosuch2=hoge"\nexport $nosuch\n export | grep nosuch | sort]:  diff OK  status OK
+[unset]                                                     :  diff OK  status OK
+[unset hoge]                                                :  diff OK  status OK
+[unset fuga]                                                :  diff OK  status OK
+[unset nosuch]                                              :  diff OK  status OK
+[unset [invalid]]                                           :  diff OK  status OK
+[unset hoge fuga]                                           :  diff OK  status OK
+[unset hoge nosuch fuga]                                    :  diff OK  status OK
+[unset fuga \n export | echo $fuga]                         :  diff OK  status OK
+[unset [invalid] fuga \n echo $fuga]                        :  diff OK  status OK
+[env | grep hoge | sort]                                    :  diff OK  status OK
+[cd]                                                        :  diff OK  status OK
+[cd .]                                                      :  diff OK  status OK
+[cd ..]                                                     :  diff OK  status OK
+[cd ///]                                                    :  diff OK  status OK
+[cd /tmp]                                                   :  diff OK  status OK
+[cd /tmp/]                                                  :  diff OK  status OK
+[cd /tmp///]                                                :  diff OK  status OK
+[cd /../../../././.././]                                    :  diff OK  status OK
+[cd src]                                                    :  diff OK  status OK
+[unset HOME\ncd]                                            :  diff OK  status OK
+[cd \n echo $PWD]                                           :  diff OK  status OK
+[cd \n echo $PWD]                                           :  diff OK  status OK
+[cd .\n echo $PWD]                                          :  diff OK  status OK
+[cd ..\n echo $PWD]                                         :  diff OK  status OK
+[cd ///\n echo $PWD]                                        :  diff OK  status OK
+[cd /tmp\n echo $PWD]                                       :  diff OK  status OK
+[cd /tmp/\n echo $PWD]                                      :  diff OK  status OK
+[cd /tmp///\n echo $PWD]                                    :  diff OK  status OK
+[cd /../../../././.././\n echo $PWD]                        :  diff OK  status OK
+[cd src\n echo $PWD]                                        :  diff OK  status OK
+[unset HOME\ncd \n echo $PWD]                               :  diff OK  status OK
+[echo]                                                      :  diff OK  status OK
+[echo hello]                                                :  diff OK  status OK
+[echo hello "    " world]                                   :  diff OK  status OK
+[echo -n]                                                   :  diff OK  status OK
+[echo -n hello]                                             :  diff OK  status OK
+[echo -n hello world]                                       :  diff OK  status OK
+[echo hello -n]                                             :  diff OK  status OK
+[echo -nn]                                                  :  diff OK  status OK
+[echo -n-n-n]                                               :  diff NG  status OK
+[echo ";|()"]                                               :  diff OK  status OK
+[pwd]                                                       :  diff OK  status OK
+[cd\npwd]                                                   :  diff OK  status OK
+[cd src\npwd]                                               :  diff OK  status OK
+[cd /etc\npwd]                                              :  diff OK  status OK
+[cd . \n pwd \n echo $PWD $OLDPWD]                          :  diff OK  status OK
+[cd .. \n pwd \n echo $PWD $OLDPWD]                         :  diff OK  status OK
+[cd /// \n pwd \n echo $PWD $OLDPWD]                        :  diff OK  status OK
+[cd /tmp/// \n pwd \n echo $PWD $OLDPWD]                    :  diff OK  status OK
+[unset PWD\npwd\ncd /etc\npwd]                              :  diff OK  status OK
+[unset PWD \n cd \n echo $PWD \ncd /tmp\necho $PWD]         :  diff OK  status OK
+[unset PWD\ncd\necho $OLDPWD\ncd /tmp\necho $OLDPWD]        :  diff OK  status OK
+[unset PWD\ncd\nexport|grep PWD\ncd /tmp\nexport|grep PWD]  :  diff NG  status OK
+[unset PWD\ncd\nenv|grep PWD\ncd /tmp\nenv|grep PWD]        :  diff NG  status OK
+Results Summary
+diff OK count: 146
+diff NG count: 42
+status OK count: 175
+status NG count: 7

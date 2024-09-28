@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 20:25:40 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/28 14:19:02 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	process_heredoc_line(char *line, bool is_delim_unquoted, t_shell *shell, in
 {
 	if (is_delim_unquoted)
 		line = expand_heredoc_line(line, shell);
-	write(write_fd, line, strlen(line));
+	write(write_fd, line, ft_strlen(line));
 	write(write_fd, "\n", 1);
 	free(line);
 }

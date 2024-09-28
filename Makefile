@@ -9,7 +9,9 @@ SRCS     = src/main.c\
            src/error/error1.c\
            src/tokenize/tokenize.c\
            src/destructor.c\
-		   src/expand/expand.c\
+		   src/expand/expand0.c\
+		   src/expand/expand1.c\
+		   src/expand/expand2.c\
 		   src/parse/parse0.c\
 		   src/parse/parse1.c\
 		   src/parse/parse2.c\
@@ -38,6 +40,7 @@ SRCS     = src/main.c\
 		   src/ft_utils/ft_utils3.c\
 		   src/ft_utils/ft_utils4.c\
 		   src/ft_utils/ft_utils5.c\
+		   src/ft_utils/ft_utils6.c\
 
 OBJS     = $(SRCS:%.c=%.o)
 

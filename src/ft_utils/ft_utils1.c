@@ -6,88 +6,35 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 17:24:43 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/28 14:31:41 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-size_t	ft_strlen(const char *str)
+bool	is_blank(char c)
 {
-	size_t	length;
-
-	length = 0;
-	while (str[length] != '\0')
-	{
-		length++;
-	}
-	return (length);
+	return (c == ' ' || c == '\t' || c == '\n');
 }
 
-char	*ft_strchr(const char *s, int c)
+bool	is_variable(char *s)
 {
-	while (*s != '\0')
-	{
-		if (*s == (char)c)
-		{
-			return ((char *)s);
-		}
-		s++;
-	}
-	if (*s == (char)c)
-	{
-		return ((char *)s);
-	}
-	return (NULL);
+	return (s[0] == '$' && is_alpha_under(s[1]));
 }
 
-char	*ft_strdup(const char *s1)
+bool	is_special_parameter(char *s)
 {
-	size_t	i;
-	char	*dup;
-
-	i = 0;
-	while (s1[i] != '\0')
-	{
-		i++;
-	}
-	dup = (char *)malloc(sizeof(char) * (i + 1));
-	if (!dup)
-	{
-		return (NULL);
-	}
-	for (size_t j = 0; j <= i; j++)
-	{
-		dup[j] = s1[j];
-	}
-	return (dup);
+	return (s[0] == '$' && s[1] == '?');
 }
 
-char	*ft_strndup(const char *s, size_t n)
+bool	is_metacharacter(char c)
 {
-	char	*dup;
-	size_t	len;
-
-	len = strnlen(s, n);
-	dup = malloc(len + 1);
-	if (dup == NULL)
-		return (NULL);
-	ft_strncpy(dup, s, len);
-	dup[len] = '\0';
-	return (dup);
+	if (is_blank(c))
+		return (true);
+	return (c && ft_strchr("|&;()<>\n", c));
 }
 
-void	*ft_memset(void *b, int c, size_t len)
+bool	is_word(const char *s)
 {
-	unsigned char	*ptr;
-	size_t			i;
-
-	ptr = (unsigned char *)b;
-	i = 0;
-	while (i < len)
-	{
-		ptr[i] = (unsigned char)c;
-		i++;
-	}
-	return (b);
+	return (*s && !is_metacharacter(*s));
 }

@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 20:49:51 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/28 14:33:06 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,18 +42,6 @@ bool	consume_blank(char **rest, char *line)
 bool	startswith(const char *s, const char *keyword)
 {
 	return (ft_memcmp(s, keyword, ft_strlen(keyword)) == 0);
-}
-
-bool	is_metacharacter(char c)
-{
-	if (is_blank(c))
-		return (true);
-	return (c && ft_strchr("|&;()<>\n", c));
-}
-
-bool	is_word(const char *s)
-{
-	return (*s && !is_metacharacter(*s));
 }
 
 t_token	*operator(char **rest, char *line)
@@ -151,11 +139,10 @@ char	**tail_recursive(t_token *token, int nargs, char **argv)
 
 	if (token == NULL || token->kind == TOKEN_EOF)
 		return (argv);
-	// 新しいサイズのメモリを確保
 	new_argv = malloc((nargs + 2) * sizeof(char *));
 	if (new_argv == NULL)
 	{
-		free(argv); // メモリ確保が失敗した場合、元のポインタを解放
+		free(argv);
 		fatal_error("malloc");
 	}
 	// 元のメモリ内容を新しい領域にコピー
