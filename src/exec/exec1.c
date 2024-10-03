@@ -6,13 +6,14 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 20:17:27 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/28 17:03:40 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 int		exec_nonbuiltin(t_node *node, t_shell *shell) __attribute__((noreturn));
+
 int	exec_nonbuiltin(t_node *node, t_shell *shell)
 {
 	char	*path;
@@ -48,7 +49,6 @@ pid_t	exec_pipeline(t_node *node, t_shell *shell)
 		fatal_error("fork");
 	else if (pid == 0)
 	{
-		// child process
 		reset_signal();
 		prepare_pipe_child(node);
 		if (is_builtin(node))
@@ -56,7 +56,6 @@ pid_t	exec_pipeline(t_node *node, t_shell *shell)
 		else
 			exec_nonbuiltin(node, shell);
 	}
-	// parent process
 	prepare_pipe_parent(node);
 	if (node->next)
 		return (exec_pipeline(node->next, shell));

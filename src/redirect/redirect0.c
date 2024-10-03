@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/28 14:19:02 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/28 16:33:38 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ int	stashfd(int fd)
 	return (stashfd);
 }
 
-void	process_heredoc_line(char *line, bool is_delim_unquoted, t_shell *shell, int write_fd)
+void	process_heredoc_line(char *line, bool is_delim_unquoted, t_shell *shell,
+		int write_fd)
 {
 	if (is_delim_unquoted)
 		line = expand_heredoc_line(line, shell);
@@ -61,7 +62,8 @@ int	read_heredoc(const char *delimiter, bool is_delim_unquoted, t_shell *shell)
 	while (1)
 	{
 		line = readline("> ");
-		if (line == NULL || shell->readline_interrupted || ft_strcmp(line, delimiter) == 0)
+		if (line == NULL || shell->readline_interrupted || ft_strcmp(line,
+				delimiter) == 0)
 		{
 			free(line);
 			break ;

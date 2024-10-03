@@ -6,17 +6,17 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 17:54:21 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/28 17:39:02 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-volatile sig_atomic_t	sig = 0;
+volatile sig_atomic_t	g_sig = 0;
 
 void	handler(int signum)
 {
-	sig = signum;
+	g_sig = signum;
 }
 
 void	reset_sig(int signum)
@@ -43,11 +43,11 @@ void	set_signal(int signum, void (*handler)(int))
 
 int	check_state(void)
 {
-	if (sig == 0)
+	if (g_sig == 0)
 		return (0);
-	else if (sig == SIGINT)
+	else if (g_sig == SIGINT)
 	{
-		sig = 0;
+		g_sig = 0;
 		rl_replace_line("", 0);
 		rl_done = 1;
 		return (0);

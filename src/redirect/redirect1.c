@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 20:23:55 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/28 17:45:20 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ int	handle_redirection(t_node *node, t_shell *shell)
 
 int	open_redir_file(t_node *node, t_shell *shell)
 {
+	int	result;
+
 	if (node == NULL)
 		return (0);
 	if (node->kind == ND_PIPELINE)
@@ -51,8 +53,10 @@ int	open_redir_file(t_node *node, t_shell *shell)
 	}
 	else if (node->kind == ND_SIMPLE_CMD)
 		return (open_redir_file(node->redirects, shell));
-	return (handle_redirection(node, shell) < 0 ?
-		-1 : open_redir_file(node->next, shell));
+	result = handle_redirection(node, shell);
+	if (result < 0)
+		return (-1);
+	return (open_redir_file(node->next, shell));
 }
 
 bool	is_redirect(t_node *node)

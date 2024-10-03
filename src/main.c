@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 14:27:31 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/28 16:42:51 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,5 @@ int	main(void)
 		interpret(line, &shell);
 		free(line);
 	}
-	// write_history("history.txt");
 	exit(shell.last_status);
 }

@@ -1,7 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
+/*   Updated: 2024/09/28 18:00:37 by a.               ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
 # include "minishell.h"
+# include <wait.h>
 # include <ctype.h>
 # include <errno.h>
 # include <fcntl.h>
@@ -19,7 +32,9 @@
 # include <unistd.h>
 
 # define ERROR_TOKENIZE 258
-# define ERROR_PARSE 258;
+# define ERROR_PARSE 258
+# define OPERATOR_COUNT 13
+# define CONTROL_OPERATOR_COUNT 9
 # define ERROR_OPEN_REDIR 1
 # define SINGLE_QUOTE_CHAR '\''
 # define DOUBLE_QUOTE_CHAR '"'
@@ -38,7 +53,6 @@ struct					s_map
 {
 	t_item				item_head;
 };
-extern t_map			*envmap;
 
 typedef struct s_shell
 {
@@ -79,23 +93,20 @@ typedef struct s_node
 {
 	t_node_type			kind;
 	t_node				*next;
-	// CMD
 	t_token				*args;
 	t_node				*redirects;
-	// REDIR
 	int					targetfd;
 	t_token				*filename;
 	t_token				*delimiter;
 	bool				is_delim_unquoted;
 	int					filefd;
 	int					stashed_targetfd;
-	// PIPELINE
 	int					inpipe[2];
 	int					outpipe[2];
 	t_node				*command;
 }						t_node;
 
-// error.c
+// error
 void					perror_prefix(void);
 void					todo(const char *msg) __attribute__((noreturn));
 void					fatal_error(const char *msg) __attribute__((noreturn));
@@ -110,7 +121,7 @@ void					xperror(const char *location);
 void					builtin_error(const char *func, const char *name,
 							const char *err);
 
-// tokenize.c
+// tokenize
 t_token					*tokenize(char *line, t_shell *shell);
 char					**token_list_to_argv(t_token *token);
 t_token					*new_token(char *word, t_token_type kind);
@@ -122,8 +133,10 @@ bool					is_metacharacter(char c);
 bool					is_word(const char *s);
 t_token					*operator(char **rest, char *line);
 t_token					*word(char **rest, char *line, t_shell *shell);
+char					*process_quote(char *line, char quote_char,
+							t_shell *shell);
 
-// expand.c
+// expand
 void					expand(t_node *node, t_shell *shell);
 char					*expand_heredoc_line(char *line, t_shell *shell);
 void					append_char(char **s, char c);
@@ -137,12 +150,12 @@ void					expand_special_parameter_str(char **dst, char **rest,
 							char *p, t_shell *shell);
 void					expand_quote_removal(t_node *node);
 
-// destructor.c
+// destructor
 void					free_node(t_node *node);
 void					free_token(t_token *token);
 void					free_argv(char **argv);
 
-// parse.c
+// parse
 t_node					*parse(t_token *token);
 void					append_command_element(t_node *command, t_token **rest,
 							t_token *tok);
@@ -151,7 +164,7 @@ t_node					*new_node(t_node_type kind);
 void					append_token(t_token **tokens, t_token *token);
 t_token					*token_dup(t_token *token);
 
-// redirect.c
+// redirect
 int						stashfd(int fd);
 int						read_heredoc(const char *delimiter,
 							bool is_delim_unquoted, t_shell *shell);
@@ -159,51 +172,51 @@ int						open_redir_file(t_node *node, t_shell *shell);
 void					do_redirect(t_node *redirects);
 void					reset_redirect(t_node *redirects);
 
-// pipe.c
+// pipe
 void					prepare_pipe(t_node *node);
 void					prepare_pipe_child(t_node *node);
 void					prepare_pipe_parent(t_node *node);
 
-// exec.c
+// exec
 int						exec(t_node *node, t_shell *shell);
 char					*search_path(const char *filename, t_shell *shell);
 void					validate_access(const char *path, const char *filename);
 pid_t					exec_pipeline(t_node *node, t_shell *shell);
 int						wait_pipeline(pid_t last_pid);
 
-// signal.h
+// signal
 
 void					reset_sig(int signum);
 void					setup_signal(void);
 
-// builtin.c
+// builtin
 bool					is_builtin(t_node *node);
 int						exec_builtin(t_node *node, t_shell *shell);
 
-// builtin_exit.c
+// builtin_exit
 bool					is_numeric(char *s);
 int						builtin_exit(char **argv, t_shell *shell);
 
-// builtin_export.c
+// builtin_export
 int						builtin_export(char **argv, t_shell *shell);
 
-// builtin_unset.c
+// builtin_unset
 int						builtin_unset(char **argv, t_shell *shell);
 
-// builtin_env.c
+// builtin_env
 int						builtin_env(char **argv, t_shell *shell);
 
-// builtin_cd.c
+// builtin_cd
 char					*resolve_pwd(char *oldpwd, char *path);
 int						builtin_cd(char **argv, t_shell *shell);
 
-// builtin_echo.c
+// builtin_echo
 int						builtin_echo(char **argv);
 
-// builtin_pwd.c
+// builtin_pwd
 int						builtin_pwd(char **argv, t_shell *shell);
 
-// map.c
+// map
 t_item					*item_new(char *name, char *value);
 char					*item_get_string(t_item *item);
 t_map					*map_new(void);
@@ -217,7 +230,8 @@ size_t					map_len(t_map *map, bool count_null_value);
 void					map_printall(t_map *map);
 t_item					*find_item(t_item *head, const char *name);
 void					update_item(t_item *item, const char *value);
-// env.c
+
+// env
 char					*xgetenv(const char *name, t_shell *shell);
 void					initenv(t_shell *shell);
 char					**get_environ(t_map *map);

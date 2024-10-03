@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin_cd.c                                       :+:      :+:    :+:   */
+/*   builtin_cd1.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 17:14:58 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/28 16:28:46 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ void	append_path_elm(char *dst, char **rest, char *src)
 	elm_len = 0;
 	while (src[elm_len] && src[elm_len] != '/')
 		elm_len++;
-	// TODO: strcat, strncat is unsafe
 	if (dst[ft_strlen(dst) - 1] != '/')
 		ft_strcat(dst, "/");
 	ft_strncat(dst, src, elm_len);
@@ -84,4 +83,3 @@ char	*resolve_pwd(char *oldpwd, char *path)
 		fatal_error("strdup");
 	return (dup);
 }
-

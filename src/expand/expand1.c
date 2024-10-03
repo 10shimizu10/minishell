@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/28 14:30:07 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/28 17:04:56 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static char	*get_variable_name(char **p)
 		assert_error("Expected dollar sign");
 	(*p)++;
 	if (!is_alpha_under(**p))
-		assert_error("Variable must start with an alphabetic character or underscore.");
+		assert_error("Variable must start with an alphabet or underscore.");
 	append_char(&name, *(*p)++);
 	while (is_alpha_num_under(**p))
 		append_char(&name, *(*p)++);
@@ -59,7 +59,6 @@ void	append_single_quote(char **dst, char **rest, char *p)
 {
 	if (*p == SINGLE_QUOTE_CHAR)
 	{
-		// skip quote
 		append_char(dst, *p++);
 		while (*p != SINGLE_QUOTE_CHAR)
 		{
@@ -67,7 +66,6 @@ void	append_single_quote(char **dst, char **rest, char *p)
 				assert_error("Unclosed single quote");
 			append_char(dst, *p++);
 		}
-		// skip quote
 		append_char(dst, *p++);
 		*rest = p;
 	}
@@ -79,7 +77,6 @@ void	append_double_quote(char **dst, char **rest, char *p, t_shell *shell)
 {
 	if (*p == DOUBLE_QUOTE_CHAR)
 	{
-		// skip quote
 		append_char(dst, *p++);
 		while (*p != DOUBLE_QUOTE_CHAR)
 		{
@@ -92,7 +89,6 @@ void	append_double_quote(char **dst, char **rest, char *p, t_shell *shell)
 			else
 				append_char(dst, *p++);
 		}
-		// skip quote
 		append_char(dst, *p++);
 		*rest = p;
 	}

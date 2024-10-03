@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/27 17:20:52 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/28 17:02:54 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,16 +48,22 @@ int	exec_builtin(t_node *node, t_shell *shell)
 bool	is_builtin(t_node *node)
 {
 	const char		*cmd_name;
-	char			*builtin_commands[] = {"exit", "export", "unset", "env",
-					"cd", "echo", "pwd"};
+	char			*builtin_commands[7];
 	unsigned int	i;
 
-	if (node == NULL || node->command == NULL | node->command->args == NULL
+	if (node == NULL || node->command == NULL || node->command->args == NULL
 		|| node->command->args->word == NULL)
 		return (false);
+	builtin_commands[0] = "exit";
+	builtin_commands[1] = "export";
+	builtin_commands[2] = "unset";
+	builtin_commands[3] = "env";
+	builtin_commands[4] = "cd";
+	builtin_commands[5] = "echo";
+	builtin_commands[6] = "pwd";
 	cmd_name = node->command->args->word;
 	i = 0;
-	while (i < sizeof(builtin_commands) / sizeof(*builtin_commands))
+	while (i < 7)
 	{
 		if (ft_strcmp(cmd_name, builtin_commands[i]) == 0)
 			return (true);

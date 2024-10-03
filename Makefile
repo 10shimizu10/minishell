@@ -7,7 +7,9 @@ LIBS     = -lreadline -L$(RLDIR)/lib
 SRCS     = src/main.c\
 		   src/error/error0.c\
            src/error/error1.c\
-           src/tokenize/tokenize.c\
+           src/tokenize/tokenize0.c\
+           src/tokenize/tokenize1.c\
+           src/tokenize/tokenize2.c\
            src/destructor.c\
 		   src/expand/expand0.c\
 		   src/expand/expand1.c\

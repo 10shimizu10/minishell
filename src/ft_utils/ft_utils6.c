@@ -6,7 +6,7 @@
 /*   By: a. <a.@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/15 05:36:00 by aoshimiz          #+#    #+#             */
-/*   Updated: 2024/09/28 14:14:58 by a.               ###   ########.fr       */
+/*   Updated: 2024/09/28 17:52:46 by a.               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,14 @@ char	*ft_strdup(const char *s1)
 	}
 	dup = (char *)malloc(sizeof(char) * (i + 1));
 	if (!dup)
-	{
 		return (NULL);
-	}
-	for (size_t j = 0; j <= i; j++)
+	i = 0;
+	while (s1[i] != '\0')
 	{
-		dup[j] = s1[j];
+		dup[i] = s1[i];
+		i++;
 	}
+	dup[i] = '\0';
 	return (dup);
 }
 
